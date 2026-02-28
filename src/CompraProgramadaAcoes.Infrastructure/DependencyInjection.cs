@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Confluent.Kafka;
 using CompraProgramadaAcoes.Application.Interfaces;
@@ -31,26 +32,32 @@ public static class DependencyInjection
 
 
     // REDIS
-    var redisConnection = configuration["Redis:Connection"]
-        ?? throw new InvalidOperationException("Redis connection not configured.");
+    services.Configure<RedisSettings>(
+        configuration.GetSection("Redis"));
 
     services.AddSingleton<IConnectionMultiplexer>(sp =>
-        ConnectionMultiplexer.Connect(redisConnection));
+    {
+        var settings = sp.GetRequiredService<IOptions<RedisSettings>>().Value;
+        return ConnectionMultiplexer.Connect(settings.Connection);
+    });
 
     services.AddScoped<ICacheService, RedisCacheService>();
 
 
+    // KAFKA - CONFIGURAÇÃO
+    services.Configure<KafkaSettings>(
+        configuration.GetSection("Kafka"));
+
     // KAFKA - PRODUCER
-    var bootstrapServers = configuration["Kafka:BootstrapServers"]
-    ?? throw new InvalidOperationException("Kafka BootstrapServers not configured.");
-
-    var kafkaConfig = new ProducerConfig
-    {
-      BootstrapServers = bootstrapServers
-    };
-
     services.AddSingleton<IProducer<string, string>>(sp =>
-        new ProducerBuilder<string, string>(kafkaConfig).Build());
+    {
+        var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+        var kafkaConfig = new ProducerConfig
+        {
+            BootstrapServers = settings.BootstrapServers
+        };
+        return new ProducerBuilder<string, string>(kafkaConfig).Build();
+    });
 
     services.AddScoped<IMessagePublisher, KafkaPublisher>();
 
