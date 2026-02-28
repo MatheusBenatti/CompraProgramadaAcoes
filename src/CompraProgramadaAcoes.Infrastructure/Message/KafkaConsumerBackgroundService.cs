@@ -1,51 +1,57 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CompraProgramadaAcoes.Infrastructure.Message;
 
 public class KafkaConsumerBackgroundService : BackgroundService
 {
-    private readonly ILogger<KafkaConsumerBackgroundService> _logger;
-    private readonly ConsumerConfig _consumerConfig;
+  private readonly ILogger<KafkaConsumerBackgroundService> _logger;
+  private readonly ConsumerConfig _consumerConfig;
+  private readonly string _topic;
 
-    public KafkaConsumerBackgroundService(ILogger<KafkaConsumerBackgroundService> logger)
+  public KafkaConsumerBackgroundService(
+    ILogger<KafkaConsumerBackgroundService> logger,
+    IOptions<KafkaSettings> options)
+  {
+    _logger = logger;
+    var settings = options.Value;
+    _consumerConfig = new ConsumerConfig
     {
-        _logger = logger;
-        _consumerConfig = new ConsumerConfig
-        {
-            GroupId = "programmed-purchase-group",
-            BootstrapServers = "kafka:9092",
-            AutoOffsetReset = AutoOffsetReset.Earliest
-        };
-    }
+      GroupId = settings.GroupId,
+      BootstrapServers = settings.BootstrapServers,
+      AutoOffsetReset = AutoOffsetReset.Earliest
+    };
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    _topic = settings.Topic;
+  }
+
+  protected override Task ExecuteAsync(CancellationToken stoppingToken)
+  {
+
+    using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
+    consumer.Subscribe([_topic]);
+    try
     {
-        try
-        {
-            using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
-            consumer.Subscribe(new[] { "programmed-purchases" });
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    var consumeResult = consumer.Consume(stoppingToken);
-                    _logger.LogInformation($"Consumed message: {consumeResult.Message.Value}");
-                    await Task.Delay(100, stoppingToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-            }
-
-            consumer.Close();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error in Kafka consumer: {ex.Message}");
-        }
+      while (!stoppingToken.IsCancellationRequested)
+      {
+        var consumeResult = consumer.Consume(stoppingToken);
+        _logger.LogInformation("Consumed message: {Message}", consumeResult.Message.Value);
+      }
     }
+    catch (OperationCanceledException)
+    {
+      _logger.LogInformation("Kafka consumer stopping...");
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Error in Kafka consumer");
+    }
+    finally
+    {
+      consumer.Close();
+    }
+    return Task.CompletedTask;
+  }
 }

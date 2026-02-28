@@ -6,56 +6,59 @@ using Confluent.Kafka;
 using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Infrastructure.Cache;
 using CompraProgramadaAcoes.Infrastructure.Message;
-using CompraProgramadaAcoes.Infrastructure.Persistence;
 using CompraProgramadaAcoes.Infrastructure.Persistence.Repositories;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+  public static IServiceCollection AddInfrastructure(
+      this IServiceCollection services,
+      IConfiguration configuration)
+  {
+    var connectionString = configuration.GetConnectionString("Default");
+
+    // DATABASE (MySQL)
+    services.AddDbContext<AppDbContext>(options =>
+        options.UseMySql(
+            connectionString,
+            ServerVersion.AutoDetect(connectionString),
+            b => b.MigrationsAssembly("CompraProgramadaAcoes.Infrastructure")
+        ));
+
+    // Repositories
+    services.AddScoped<ICompraProgramadaRepository, CompraProgramadaRepository>();
+
+
+    // REDIS
+    var redisConnection = configuration["Redis:Connection"]
+        ?? throw new InvalidOperationException("Redis connection not configured.");
+
+    services.AddSingleton<IConnectionMultiplexer>(sp =>
+        ConnectionMultiplexer.Connect(redisConnection));
+
+    services.AddScoped<ICacheService, RedisCacheService>();
+
+
+    // KAFKA - PRODUCER
+    var bootstrapServers = configuration["Kafka:BootstrapServers"]
+    ?? throw new InvalidOperationException("Kafka BootstrapServers not configured.");
+
+    var kafkaConfig = new ProducerConfig
     {
-        var connectionString = configuration.GetConnectionString("Default");
+      BootstrapServers = bootstrapServers
+    };
 
-        // DATABASE (MySQL)
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql(
-                connectionString,
-                ServerVersion.AutoDetect(connectionString),
-                b => b.MigrationsAssembly("CompraProgramadaAcoes.Infrastructure")
-            ));
+    services.AddSingleton<IProducer<string, string>>(sp =>
+        new ProducerBuilder<string, string>(kafkaConfig).Build());
 
-        // Repositories
-        services.AddScoped<ICompraProgramadaRepository, CompraProgramadaRepository>();
+    services.AddScoped<IMessagePublisher, KafkaPublisher>();
 
 
-        // REDIS
-        var redisConnection = configuration["Redis:Connection"] ?? "localhost:6379";
-
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-            ConnectionMultiplexer.Connect(redisConnection));
-
-        services.AddScoped<ICacheService, RedisCacheService>();
+    // KAFKA - CONSUMER
+    services.AddHostedService<KafkaConsumerBackgroundService>();
 
 
-        // KAFKA - PRODUCER
-        var kafkaConfig = new ProducerConfig
-        {
-            BootstrapServers = configuration["Kafka:BootstrapServers"]
-        };
-
-        services.AddSingleton<IProducer<string, string>>(sp =>
-            new ProducerBuilder<string, string>(kafkaConfig).Build());
-
-        services.AddScoped<IMessagePublisher, KafkaPublisher>();
-
-
-        // KAFKA - CONSUMER
-        services.AddHostedService<KafkaConsumerBackgroundService>();
-
-
-        return services;
-    }
+    return services;
+  }
 }

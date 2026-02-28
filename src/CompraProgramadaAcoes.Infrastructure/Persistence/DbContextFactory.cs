@@ -1,22 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace CompraProgramadaAcoes.Infrastructure.Persistence;
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
-    public AppDbContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        
-        var connectionString = "server=localhost;port=3306;database=CompraProgramadaAcoes_db;user=root;password=123456";
-        
-        optionsBuilder.UseMySql(
-            connectionString,
-            ServerVersion.AutoDetect(connectionString),
-            b => b.MigrationsAssembly("CompraProgramadaAcoes.Infrastructure")
-        );
+  public AppDbContext CreateDbContext(string[] args)
+  {
+    var configuration = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile("appsettings.Development.json", optional: true)
+        .Build();
 
-        return new AppDbContext(optionsBuilder.Options);
-    }
+    var connectionString = configuration.GetConnectionString("Default");
+
+    var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+    optionsBuilder.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString),
+        b => b.MigrationsAssembly("CompraProgramadaAcoes.Infrastructure"));
+
+    return new AppDbContext(optionsBuilder.Options);
+  }
 }

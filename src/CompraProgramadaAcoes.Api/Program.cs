@@ -1,4 +1,8 @@
 using CompraProgramadaAcoes.Infrastructure;
+using CompraProgramadaAcoes.Infrastructure.Cache;
+using CompraProgramadaAcoes.Infrastructure.Message;
+using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +11,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-var app = builder.Build();
+//kafka settings
+builder.Services.Configure<KafkaSettings>(
+    builder.Configuration.GetSection("Kafka"));
+//redis settings
+builder.Services.Configure<RedisSettings>(
+    builder.Configuration.GetSection("Redis"));
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+  var settings = sp
+      .GetRequiredService<IOptions<RedisSettings>>()
+      .Value;
+
+  return ConnectionMultiplexer.Connect(settings.ConnectionString);
+});
 
 // Configure the HTTP request pipeline.
+var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
