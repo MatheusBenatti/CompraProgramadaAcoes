@@ -1,0 +1,21 @@
+namespace CompraProgramadaAcoes.Application.DTOs;
+
+public class AdesaoResponse
+{
+    public int ClienteId { get; set; }
+    public string Nome { get; set; } = null!;
+    public string Cpf { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public decimal ValorMensal { get; set; }
+    public bool Ativo { get; set; }
+    public DateTime DataAdesao { get; set; }
+    public ContaGraficaResponse ContaGrafica { get; set; } = null!;
+}
+
+public class ContaGraficaResponse
+{
+    public int Id { get; set; }
+    public string NumeroConta { get; set; } = null!;
+    public string Tipo { get; set; } = null!;
+    public DateTime DataCriacao { get; set; }
+}

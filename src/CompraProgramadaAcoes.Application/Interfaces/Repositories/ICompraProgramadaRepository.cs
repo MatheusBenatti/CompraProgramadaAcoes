@@ -1,6 +1,6 @@
 using CompraProgramadaAcoes.Domain.Entities;
 
-namespace CompraProgramadaAcoes.Application.Interfaces;
+namespace CompraProgramadaAcoes.Application.Interfaces.Repositories;
 
 public interface ICompraProgramadaRepository
 {

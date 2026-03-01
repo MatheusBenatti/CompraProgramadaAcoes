@@ -4,10 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Confluent.Kafka;
-using CompraProgramadaAcoes.Application.Interfaces;
+using CompraProgramadaAcoes.Application.UseCases;
+using CompraProgramadaAcoes.Domain.Interfaces;
 using CompraProgramadaAcoes.Infrastructure.Cache;
 using CompraProgramadaAcoes.Infrastructure.Message;
 using CompraProgramadaAcoes.Infrastructure.Persistence.Repositories;
+using CompraProgramadaAcoes.Domain.Factories;
+using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
@@ -29,7 +33,17 @@ public static class DependencyInjection
 
     // Repositories
     services.AddScoped<ICompraProgramadaRepository, CompraProgramadaRepository>();
+    services.AddScoped<IClienteRepository, ClienteRepository>();
+    services.AddScoped<IContaGraficaRepository, ContaGraficaRepository>();
+    services.AddScoped<ICustodiaRepository, CustodiaRepository>();
 
+    // Factories
+    services.AddScoped<IClienteFactory, ClienteFactory>();
+    services.AddScoped<IContaGraficaFactory, ContaGraficaFactory>();
+    services.AddScoped<ICustodiaFactory, CustodiaFactory>();
+
+    // Use Cases
+    services.AddScoped<RealizarAdesao>();
 
     // REDIS
     services.Configure<RedisSettings>(
