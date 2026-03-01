@@ -5,7 +5,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-  public DbSet<Product> Products { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<ContaGrafica> ContasGraficas { get; set; }
     public DbSet<Custodia> Custodias { get; set; }
