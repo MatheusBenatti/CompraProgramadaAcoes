@@ -1,7 +1,8 @@
 using CompraProgramadaAcoes.Application.DTOs;
-using CompraProgramadaAcoes.Domain.Interfaces;
-using CompraProgramadaAcoes.Application.Mappers;
+using CompraProgramadaAcoes.Application.Exceptions;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Mappers;
+using CompraProgramadaAcoes.Domain.Interfaces;
 
 namespace CompraProgramadaAcoes.Application.UseCases;
 
@@ -24,7 +25,7 @@ public class RealizarAdesao(
   {
     // Validar CPF único
     if (await _clienteRepository.CpfExistsAsync(request.Cpf))
-      throw new InvalidOperationException("CPF já cadastrado no sistema");
+      throw new ClienteCpfDuplicadoException();
 
     // Criar cliente
     var cliente = _clienteFactory.Criar(request.Nome, request.Cpf, request.Email, request.ValorMensal);

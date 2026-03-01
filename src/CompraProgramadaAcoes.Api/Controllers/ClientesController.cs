@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using CompraProgramadaAcoes.Application.DTOs;
+using CompraProgramadaAcoes.Application.Exceptions;
 using CompraProgramadaAcoes.Application.UseCases;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
@@ -22,27 +23,46 @@ public class ClientesController(RealizarAdesao realizarAdesao) : ControllerBase
   public async Task<IActionResult> Adesao([FromBody] AdesaoRequest request)
   {
     if (!ModelState.IsValid)
-      return BadRequest(ModelState);
+    {
+      return BadRequest(new ErrorResponse
+      {
+        Erro = "Dados inválidos.",
+        Codigo = "REQUISICAO_INVALIDA"
+      });
+    }
 
     try
     {
       var response = await _realizarAdesao.ExecuteAsync(request);
+
       return CreatedAtAction(
           nameof(Adesao),
           new { id = response.ClienteId },
           response);
     }
-    catch (InvalidOperationException ex) when (ex.Message.Contains("CPF já cadastrado"))
+    catch (ClienteCpfDuplicadoException ex)
     {
-      return Conflict(new { error = ex.Message });
+      return BadRequest(new ErrorResponse
+      {
+        Erro = ex.Message,
+        Codigo = "CLIENTE_CPF_DUPLICADO"
+      });
     }
     catch (ArgumentException ex)
     {
-      return BadRequest(new { error = ex.Message });
+      return BadRequest(new ErrorResponse
+      {
+        Erro = ex.Message,
+        Codigo = "VALIDACAO_ERRO"
+      });
     }
-    catch (Exception ex)
+    catch (Exception)
     {
-      return StatusCode(500, new { error = "Erro interno ao processar adesão" });
+      return StatusCode(500, new ErrorResponse
+      {
+        Erro = "Erro interno ao processar adesão.",
+        Codigo = "ERRO_INTERNO"
+      });
     }
   }
 }
