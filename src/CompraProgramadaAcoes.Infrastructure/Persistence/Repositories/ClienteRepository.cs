@@ -12,7 +12,6 @@ public class ClienteRepository(AppDbContext context) : IClienteRepository
     {
         return await _context.Clientes
             .Include(c => c.ContaGrafica)
-            .Include(c => c.Custodia)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
@@ -20,7 +19,6 @@ public class ClienteRepository(AppDbContext context) : IClienteRepository
     {
         return await _context.Clientes
             .Include(c => c.ContaGrafica)
-            .Include(c => c.Custodia)
             .FirstOrDefaultAsync(c => c.Cpf == cpf);
     }
 

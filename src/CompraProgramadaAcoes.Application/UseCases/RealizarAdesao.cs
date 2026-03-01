@@ -35,19 +35,21 @@ public class RealizarAdesao(
 
     // Criar Conta Gráfica Filhote 
     var contaGrafica = _contaGraficaFactory.Criar(cliente.Id);
+    
+    // Gerar número da conta após obter ID (precisa salvar primeiro para ter o ID)
     contaGrafica = await _contaGraficaRepository.AddAsync(contaGrafica);
     await _contaGraficaRepository.SaveChangesAsync();
-
-    // Gerar número da conta após obter ID
+    
+    // Agora com o ID, gerar número da conta e atualizar
     contaGrafica.GerarNumeroConta();
+    await _contaGraficaRepository.SaveChangesAsync();
 
     // Criar Custódia Filhote 
-    var custodia = _custodiaFactory.Criar(cliente.Id, contaGrafica.Id);
+    var custodia = _custodiaFactory.Criar(contaGrafica.Id);
     await _custodiaRepository.AddAsync(custodia);
 
     // Associar entidades
     cliente.AssociarContaGrafica(contaGrafica);
-    cliente.AssociarCustodia(custodia);
 
     // Salvar todas as alterações de uma vez
     await _clienteRepository.SaveChangesAsync();

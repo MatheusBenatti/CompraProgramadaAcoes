@@ -11,7 +11,6 @@ public class CustodiaRepository(AppDbContext context) : ICustodiaRepository
   public async Task<Custodia?> GetByIdAsync(int id)
     {
         return await _context.Custodias
-            .Include(c => c.Cliente)
             .Include(c => c.ContaGrafica)
             .FirstOrDefaultAsync(c => c.Id == id);
     }

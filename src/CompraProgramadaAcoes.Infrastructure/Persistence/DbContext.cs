@@ -34,7 +34,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.ToTable("ContasGraficas");
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
-      entity.Property(e => e.NumeroConta).HasMaxLength(20).IsRequired();
+      entity.Property(e => e.NumeroConta).HasMaxLength(20);
       entity.HasIndex(e => e.NumeroConta).IsUnique();
       entity.Property(e => e.Tipo)
           .HasConversion<string>()
@@ -42,8 +42,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
           .IsRequired();
       entity.Property(e => e.DataCriacao).IsRequired();
       entity.HasOne(e => e.Cliente)
-          .WithMany()
-          .HasForeignKey(e => e.ClienteId)
+          .WithOne(e => e.ContaGrafica)
+          .HasForeignKey<ContaGrafica>(e => e.ClienteId)
           .OnDelete(DeleteBehavior.Cascade)
           .HasConstraintName("FK_Conta_Cliente");
     });
@@ -59,7 +59,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.Property(e => e.PrecoMedio).HasColumnType("decimal(18,4)").IsRequired();
       entity.Property(e => e.DataUltimaAtualizacao).IsRequired();
       entity.HasOne(e => e.ContaGrafica)
-          .WithMany()
+          .WithMany(e => e.Custodias)
           .HasForeignKey(e => e.ContaGraficaId)
           .OnDelete(DeleteBehavior.Cascade)
           .HasConstraintName("FK_Custodia_Conta");
