@@ -1,12 +1,12 @@
 namespace CompraProgramadaAcoes.Domain.Entities;
 
-public class ContaGrafica(int clienteId)
+public class ContaGrafica(long clienteId)
 {
-    public int Id { get; private set; }
+    public long Id { get; private set; }
     public string NumeroConta { get; private set; } = null!;
     public string Tipo { get; private set; } = "FILHOTE";
     public DateTime DataCriacao { get; private set; } = DateTime.UtcNow;
-    public int ClienteId { get; private set; } = clienteId;
+    public long ClienteId { get; private set; } = clienteId;
     public Cliente Cliente { get; private set; } = null!;
 
     public void GerarNumeroConta()

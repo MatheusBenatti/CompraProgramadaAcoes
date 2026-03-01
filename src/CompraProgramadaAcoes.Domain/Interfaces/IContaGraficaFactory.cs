@@ -4,5 +4,5 @@ namespace CompraProgramadaAcoes.Domain.Interfaces;
 
 public interface IContaGraficaFactory
 {
-  ContaGrafica Criar(int clienteId);
+  ContaGrafica Criar(long clienteId);
 }

@@ -4,5 +4,5 @@ namespace CompraProgramadaAcoes.Domain.Interfaces;
 
 public interface ICustodiaFactory
 {
-    Custodia Criar(int clienteId, int contaGraficaId);
+    Custodia Criar(long clienteId, long contaGraficaId);
 }

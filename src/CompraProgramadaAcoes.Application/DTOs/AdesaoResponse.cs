@@ -2,7 +2,7 @@ namespace CompraProgramadaAcoes.Application.DTOs;
 
 public class AdesaoResponse
 {
-    public int ClienteId { get; set; }
+    public long ClienteId { get; set; }
     public string Nome { get; set; } = null!;
     public string Cpf { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -14,7 +14,7 @@ public class AdesaoResponse
 
 public class ContaGraficaResponse
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string NumeroConta { get; set; } = null!;
     public string Tipo { get; set; } = null!;
     public DateTime DataCriacao { get; set; }

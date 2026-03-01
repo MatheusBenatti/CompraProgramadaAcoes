@@ -5,7 +5,7 @@ namespace CompraProgramadaAcoes.Domain.Factories;
 
 public class ContaGraficaFactory : IContaGraficaFactory
 {
-    public ContaGrafica Criar(int clienteId)
+    public ContaGrafica Criar(long clienteId)
     {
         var conta = new ContaGrafica(clienteId);
         return conta;

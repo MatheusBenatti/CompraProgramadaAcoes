@@ -2,7 +2,7 @@ namespace CompraProgramadaAcoes.Domain.Entities;
 
 public class Cliente(string nome, string cpf, string email, decimal valorMensal)
 {
-  public int Id { get; private set; }
+  public long Id { get; private set; }
   public string Nome { get; private set; } = nome;
   public string Cpf { get; private set; } = cpf;
   public string Email { get; private set; } = email;

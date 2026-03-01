@@ -5,47 +5,64 @@ namespace CompraProgramadaAcoes.Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<Cliente> Clientes { get; set; }
-    public DbSet<ContaGrafica> ContasGraficas { get; set; }
-    public DbSet<Custodia> Custodias { get; set; }
+  public DbSet<Cliente> Clientes { get; set; }
+  public DbSet<ContaGrafica> ContasGraficas { get; set; }
+  public DbSet<Custodia> Custodias { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  {
+    base.OnModelCreating(modelBuilder);
+
+    // Cliente
+    modelBuilder.Entity<Cliente>(entity =>
     {
-        base.OnModelCreating(modelBuilder);
+      entity.ToTable("Clientes");
+      entity.HasKey(e => e.Id);
+      entity.Property(e => e.Id).ValueGeneratedOnAdd();
+      entity.Property(e => e.Nome).HasMaxLength(200).IsRequired();
+      entity.Property(e => e.Cpf).HasMaxLength(11).IsRequired();
+      entity.HasIndex(e => e.Cpf).IsUnique();
+      entity.Property(e => e.Email).HasMaxLength(200).IsRequired();
+      entity.Property(e => e.ValorMensal).HasColumnType("decimal(18,2)").IsRequired();
+      entity.Property(e => e.Ativo).HasDefaultValue(true);
+      entity.Property(e => e.DataAdesao).IsRequired();
+    });
 
-        // Cliente
-        modelBuilder.Entity<Cliente>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Cpf).IsRequired().HasMaxLength(11);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Nome).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.ValorMensal).HasPrecision(18, 2);
-            entity.HasIndex(e => e.Cpf).IsUnique();
-        });
+    // ContaGrafica
+    modelBuilder.Entity<ContaGrafica>(entity =>
+    {
+      entity.ToTable("ContasGraficas");
+      entity.HasKey(e => e.Id);
+      entity.Property(e => e.Id).ValueGeneratedOnAdd();
+      entity.Property(e => e.NumeroConta).HasMaxLength(20).IsRequired();
+      entity.HasIndex(e => e.NumeroConta).IsUnique();
+      entity.Property(e => e.Tipo)
+          .HasConversion<string>()
+          .HasMaxLength(7)
+          .IsRequired();
+      entity.Property(e => e.DataCriacao).IsRequired();
+      entity.HasOne(e => e.Cliente)
+          .WithMany()
+          .HasForeignKey(e => e.ClienteId)
+          .OnDelete(DeleteBehavior.Cascade)
+          .HasConstraintName("FK_Conta_Cliente");
+    });
 
-        // ContaGrafica
-        modelBuilder.Entity<ContaGrafica>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.NumeroConta).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Tipo).IsRequired().HasMaxLength(20);
-            entity.HasOne(e => e.Cliente)
-                  .WithOne(c => c.ContaGrafica)
-                  .HasForeignKey<ContaGrafica>(e => e.ClienteId);
-        });
-
-        // Custodia
-        modelBuilder.Entity<Custodia>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
-            entity.HasOne(e => e.Cliente)
-                  .WithOne(c => c.Custodia)
-                  .HasForeignKey<Custodia>(e => e.ClienteId);
-            entity.HasOne(e => e.ContaGrafica)
-                  .WithMany()
-                  .HasForeignKey(e => e.ContaGraficaId);
-        });
-    }
+    // Custodia
+    modelBuilder.Entity<Custodia>(entity =>
+    {
+      entity.ToTable("Custodias");
+      entity.HasKey(e => e.Id);
+      entity.Property(e => e.Id).ValueGeneratedOnAdd();
+      entity.Property(e => e.Ticker).HasMaxLength(10).IsRequired();
+      entity.Property(e => e.Quantidade).IsRequired();
+      entity.Property(e => e.PrecoMedio).HasColumnType("decimal(18,4)").IsRequired();
+      entity.Property(e => e.DataUltimaAtualizacao).IsRequired();
+      entity.HasOne(e => e.ContaGrafica)
+          .WithMany()
+          .HasForeignKey(e => e.ContaGraficaId)
+          .OnDelete(DeleteBehavior.Cascade)
+          .HasConstraintName("FK_Custodia_Conta");
+    });
+  }
 }
