@@ -69,7 +69,7 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ContaGraficaId = table.Column<long>(type: "bigint", nullable: false),
-                    Ticker = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                    Ticker = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
                     PrecoMedio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),

@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copia solution e csproj primeiro (melhora cache)
 COPY CompraProgramadaAcoes.sln ./
 
 COPY src/CompraProgramadaAcoes.Domain/*.csproj src/CompraProgramadaAcoes.Domain/

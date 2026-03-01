@@ -75,8 +75,12 @@ public static class DependencyInjection
     services.AddScoped<IMessagePublisher, KafkaPublisher>();
 
 
-    // KAFKA - CONSUMER
-    services.AddHostedService<KafkaConsumerBackgroundService>();
+    // KAFKA - CONSUMER (apenas em ambiente de produção/Docker)
+    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+    if (environment != "Development")
+    {
+      services.AddHostedService<KafkaConsumerBackgroundService>();
+    }
 
 
     return services;

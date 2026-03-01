@@ -8,7 +8,7 @@ public class ContaGrafica(long clienteId)
     public DateTime DataCriacao { get; private set; } = DateTime.UtcNow;
     public long ClienteId { get; private set; } = clienteId;
     public Cliente Cliente { get; private set; } = null!;
-    public ICollection<Custodia> Custodias { get; private set; } = new List<Custodia>();
+  public ICollection<Custodia> Custodias { get; private set; } = [];
 
     public void GerarNumeroConta()
     {

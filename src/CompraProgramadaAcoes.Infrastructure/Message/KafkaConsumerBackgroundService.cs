@@ -17,6 +17,10 @@ public class KafkaConsumerBackgroundService : BackgroundService
   {
     _logger = logger;
     var settings = options.Value;
+    
+    _logger.LogInformation("Kafka configuration - BootstrapServers: {BootstrapServers}, GroupId: {GroupId}, Topic: {Topic}", 
+      settings.BootstrapServers, settings.GroupId, settings.Topic);
+    
     _consumerConfig = new ConsumerConfig
     {
       GroupId = settings.GroupId,
@@ -27,31 +31,48 @@ public class KafkaConsumerBackgroundService : BackgroundService
     _topic = settings.Topic;
   }
 
-  protected override Task ExecuteAsync(CancellationToken stoppingToken)
+  protected override async Task ExecuteAsync(CancellationToken stoppingToken)
   {
+    _logger.LogInformation("Starting Kafka consumer with BootstrapServers: {BootstrapServers}", _consumerConfig.BootstrapServers);
 
-    using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
-    consumer.Subscribe([_topic]);
-    try
+    while (!stoppingToken.IsCancellationRequested)
     {
-      while (!stoppingToken.IsCancellationRequested)
+      try
       {
-        var consumeResult = consumer.Consume(stoppingToken);
-        _logger.LogInformation("Consumed message: {Message}", consumeResult.Message.Value);
+        _logger.LogInformation("Attempting to connect to Kafka at {BootstrapServers}...", _consumerConfig.BootstrapServers);
+        
+        using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
+        consumer.Subscribe(new[] { _topic });
+        
+        _logger.LogInformation("Kafka consumer connected successfully to {BootstrapServers}", _consumerConfig.BootstrapServers);
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+          var consumeResult = consumer.Consume(stoppingToken);
+          _logger.LogInformation("Consumed message: {Message}", consumeResult.Message.Value);
+        }
+        
+        consumer.Close();
+      }
+      catch (OperationCanceledException)
+      {
+        _logger.LogInformation("Kafka consumer stopping...");
+        break;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "Error connecting to Kafka at {BootstrapServers}. Retrying in 5 seconds...", _consumerConfig.BootstrapServers);
+        
+        // Wait before retrying
+        try
+        {
+          await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+        }
+        catch (OperationCanceledException)
+        {
+          break;
+        }
       }
     }
-    catch (OperationCanceledException)
-    {
-      _logger.LogInformation("Kafka consumer stopping...");
-    }
-    catch (Exception ex)
-    {
-      _logger.LogError(ex, "Error in Kafka consumer");
-    }
-    finally
-    {
-      consumer.Close();
-    }
-    return Task.CompletedTask;
   }
 }

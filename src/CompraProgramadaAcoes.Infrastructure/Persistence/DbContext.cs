@@ -54,7 +54,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.ToTable("Custodias");
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
-      entity.Property(e => e.Ticker).HasMaxLength(10).IsRequired();
+      entity.Property(e => e.Ticker).HasMaxLength(10);
       entity.Property(e => e.Quantidade).IsRequired();
       entity.Property(e => e.PrecoMedio).HasColumnType("decimal(18,4)").IsRequired();
       entity.Property(e => e.DataUltimaAtualizacao).IsRequired();

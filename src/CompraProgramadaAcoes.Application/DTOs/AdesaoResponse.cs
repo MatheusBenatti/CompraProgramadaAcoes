@@ -8,7 +8,7 @@ public class AdesaoResponse
     public string Email { get; set; } = null!;
     public decimal ValorMensal { get; set; }
     public bool Ativo { get; set; }
-    public DateTime DataAdesao { get; set; }
+    public string DataAdesao { get; set; } = default!;
     public ContaGraficaResponse ContaGrafica { get; set; } = null!;
 }
 
@@ -17,5 +17,5 @@ public class ContaGraficaResponse
     public long Id { get; set; }
     public string NumeroConta { get; set; } = null!;
     public string Tipo { get; set; } = null!;
-    public DateTime DataCriacao { get; set; }
+    public string DataCriacao { get; set; } = default!;
 }

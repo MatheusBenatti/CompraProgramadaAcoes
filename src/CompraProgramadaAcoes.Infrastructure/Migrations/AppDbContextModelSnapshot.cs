@@ -119,7 +119,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Ticker")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 

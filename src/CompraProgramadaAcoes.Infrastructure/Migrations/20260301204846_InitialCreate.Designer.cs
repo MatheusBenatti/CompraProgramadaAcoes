@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompraProgramadaAcoes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260301180711_InitialCreate")]
+    [Migration("20260301204846_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -122,7 +122,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Ticker")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
