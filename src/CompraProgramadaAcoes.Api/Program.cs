@@ -15,5 +15,5 @@ app.MapOpenApi();
 app.MapControllers();
 
 app.Run();
-
+// para testes de integracao
 public partial class Program { }
