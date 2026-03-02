@@ -12,8 +12,14 @@ public class Cliente(string nome, string cpf, string email, decimal valorMensal)
 
 
   public ContaGrafica ContaGrafica { get; private set; } = null!;
+  
   public void AssociarContaGrafica(ContaGrafica contaGrafica)
   {
     ContaGrafica = contaGrafica;
+  }
+  
+  public void Desativar()
+  {
+    Ativo = false;
   }
 }
