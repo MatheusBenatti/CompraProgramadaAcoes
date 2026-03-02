@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
   public DbSet<Cliente> Clientes { get; set; }
   public DbSet<ContaGrafica> ContasGraficas { get; set; }
   public DbSet<Custodia> Custodias { get; set; }
+  public DbSet<HistoricoValorMensal> HistoricoValoresMensais { get; set; }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -63,6 +64,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
           .HasForeignKey(e => e.ContaGraficaId)
           .OnDelete(DeleteBehavior.Cascade)
           .HasConstraintName("FK_Custodia_Conta");
+    });
+
+    // HistoricoValorMensal
+    modelBuilder.Entity<HistoricoValorMensal>(entity =>
+    {
+      entity.ToTable("HistoricoValoresMensais");
+      entity.HasKey(e => e.Id);
+      entity.Property(e => e.Id).ValueGeneratedOnAdd();
+      entity.Property(e => e.ValorAnterior).HasColumnType("decimal(18,2)").IsRequired();
+      entity.Property(e => e.ValorNovo).HasColumnType("decimal(18,2)").IsRequired();
+      entity.Property(e => e.DataAlteracao).IsRequired();
+      entity.HasIndex(e => e.ClienteId);
     });
   }
 }

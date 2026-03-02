@@ -22,4 +22,9 @@ public class Cliente(string nome, string cpf, string email, decimal valorMensal)
   {
     Ativo = false;
   }
+  
+  public void AtualizarValorMensal(decimal novoValor)
+  {
+    ValorMensal = novoValor;
+  }
 }

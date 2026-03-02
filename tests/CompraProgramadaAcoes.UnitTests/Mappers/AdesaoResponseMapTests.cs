@@ -28,13 +28,13 @@ public class AdesaoResponseMapTests
         result.Email.Should().Be(cliente.Email);
         result.ValorMensal.Should().Be(cliente.ValorMensal);
         result.Ativo.Should().Be(cliente.Ativo);
-        result.DataAdesao.Should().Be(cliente.DataAdesao.ToString("yyyy-MM-ddTHH:mm:ss"));
+        result.DataAdesao.Should().Be(cliente.DataAdesao.ToString("yyyy-MM-ddTHH:mm:ssZ"));
 
         result.ContaGrafica.Should().NotBeNull();
         result.ContaGrafica.Id.Should().Be(contaGrafica.Id);
         result.ContaGrafica.NumeroConta.Should().Be(contaGrafica.NumeroConta);
         result.ContaGrafica.Tipo.Should().Be(contaGrafica.Tipo);
-        result.ContaGrafica.DataCriacao.Should().Be(contaGrafica.DataCriacao.ToString("yyyy-MM-ddTHH:mm:ss"));
+        result.ContaGrafica.DataCriacao.Should().Be(contaGrafica.DataCriacao.ToString("yyyy-MM-ddTHH:mm:ssZ"));
     }
 
     [Fact]
@@ -91,8 +91,8 @@ public class AdesaoResponseMapTests
         var result = AdesaoResponseMap.MapearParaResponse(cliente, contaGrafica);
 
         // Assert
-        result.DataAdesao.Should().MatchRegex(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$");
-        result.ContaGrafica.DataCriacao.Should().MatchRegex(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$");
+        result.DataAdesao.Should().MatchRegex(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$");
+        result.ContaGrafica.DataCriacao.Should().MatchRegex(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$");
     }
 
     [Fact]

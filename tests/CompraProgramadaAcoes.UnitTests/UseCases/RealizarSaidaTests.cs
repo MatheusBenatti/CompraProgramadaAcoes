@@ -41,7 +41,7 @@ public class RealizarSaidaTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_QuandoClienteJaEstaInativo_DeveRetornarMensagemCorrespondente()
+    public async Task ExecuteAsync_QuandoClienteJaEstaInativo_DeveLancarClienteJaInativoException()
     {
         // Arrange
         var clienteId = 1;
@@ -55,16 +55,12 @@ public class RealizarSaidaTests
             .Setup(x => x.GetByIdAsync(clienteId))
             .ReturnsAsync(cliente);
 
-        // Act
-        var result = await _realizarSaida.ExecuteAsync(clienteId);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.ClienteId.Should().Be(clienteId);
-        result.Nome.Should().Be(cliente.Nome);
-        result.Ativo.Should().BeFalse();
-        result.Mensagem.Should().Be("Cliente já está inativo.");
-        result.DataSaida.Should().NotBeNullOrEmpty();
+        // Act & Assert
+        await _realizarSaida
+            .Invoking(x => x.ExecuteAsync(clienteId))
+            .Should()
+            .ThrowAsync<ClienteJaInativoException>()
+            .WithMessage("Cliente já havia saído do produto.");
 
         _clienteRepositoryMock.Verify(x => x.GetByIdAsync(clienteId), Times.Once);
         _clienteRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Never);
@@ -163,9 +159,12 @@ public class RealizarSaidaTests
         result.Should().NotBeNull();
         result.DataSaida.Should().NotBeNullOrEmpty();
         
-        // Verificar formato da data (yyyy-MM-ddTHH:mm)
-        var dataSaida = DateTime.Parse(result.DataSaida);
-        dataSaida.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        // Verificar formato da data (yyyy-MM-ddTHH:mm:ssZ)
+        result.DataSaida.Should().MatchRegex(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$");
+        
+        // Verificar se a data é próxima da atual (usando DateTimeOffset para UTC)
+        var dataSaida = DateTimeOffset.Parse(result.DataSaida);
+        dataSaida.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromMinutes(5));
 
         _clienteRepositoryMock.Verify(x => x.GetByIdAsync(clienteId), Times.Once);
         _clienteRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);

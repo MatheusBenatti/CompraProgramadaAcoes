@@ -7,10 +7,11 @@ namespace CompraProgramadaAcoes.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClientesController(RealizarAdesao realizarAdesao, RealizarSaida realizarSaida) : ControllerBase
+public class ClientesController(RealizarAdesao realizarAdesao, RealizarSaida realizarSaida, AlterarValorMensal alterarValorMensal) : ControllerBase
 {
   private readonly RealizarAdesao _realizarAdesao = realizarAdesao;
   private readonly RealizarSaida _realizarSaida = realizarSaida;
+  private readonly AlterarValorMensal _alterarValorMensal = alterarValorMensal;
 
   /// <summary>
   /// Realiza a adesão de um novo cliente ao produto
@@ -91,11 +92,72 @@ public class ClientesController(RealizarAdesao realizarAdesao, RealizarSaida rea
         Codigo = "CLIENTE_NAO_ENCONTRADO"
       });
     }
+    catch (ClienteJaInativoException)
+    {
+      return BadRequest(new ErrorResponse
+      {
+        Erro = "Cliente já havia saído do produto.",
+        Codigo = "CLIENTE_JA_INATIVO"
+      });
+    }
     catch (Exception)
     {
       return StatusCode(500, new ErrorResponse
       {
         Erro = "Erro interno ao processar saída.",
+        Codigo = "ERRO_INTERNO"
+      });
+    }
+  }
+
+  /// <summary>
+  /// Altera o valor mensal de um cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <param name="request">Dados da alteração do valor mensal</param>
+  /// <returns>Dados da alteração do valor mensal</returns>
+  [HttpPut("{clienteId}/valor-mensal")]
+  [ProducesResponseType(typeof(AlterarValorMensalResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> AlterarValorMensal(int clienteId, [FromBody] AlterarValorMensalRequest request)
+  {
+    if (!ModelState.IsValid)
+    {
+      return BadRequest(new ErrorResponse
+      {
+        Erro = "Dados inválidos.",
+        Codigo = "REQUISICAO_INVALIDA"
+      });
+    }
+
+    try
+    {
+      var response = await _alterarValorMensal.ExecuteAsync(clienteId, request);
+      return Ok(response);
+    }
+    catch (ClienteNaoEncontradoException)
+    {
+      return NotFound(new ErrorResponse
+      {
+        Erro = "Cliente não encontrado.",
+        Codigo = "CLIENTE_NAO_ENCONTRADO"
+      });
+    }
+    catch (ClienteJaInativoException)
+    {
+      return BadRequest(new ErrorResponse
+      {
+        Erro = "Cliente já havia saído do produto.",
+        Codigo = "CLIENTE_JA_INATIVO"
+      });
+    }
+    catch (Exception)
+    {
+      return StatusCode(500, new ErrorResponse
+      {
+        Erro = "Erro interno ao processar alteração de valor mensal.",
         Codigo = "ERRO_INTERNO"
       });
     }

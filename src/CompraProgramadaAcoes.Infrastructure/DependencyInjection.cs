@@ -35,6 +35,7 @@ public static class DependencyInjection
     services.AddScoped<IClienteRepository, ClienteRepository>();
     services.AddScoped<IContaGraficaRepository, ContaGraficaRepository>();
     services.AddScoped<ICustodiaRepository, CustodiaRepository>();
+    services.AddScoped<IHistoricoValorMensalRepository, HistoricoValorMensalRepository>();
 
     // Factories
     services.AddScoped<IClienteFactory, ClienteFactory>();
@@ -44,6 +45,7 @@ public static class DependencyInjection
     // Use Cases
     services.AddScoped<RealizarAdesao>();
     services.AddScoped<RealizarSaida>();
+    services.AddScoped<AlterarValorMensal>();
 
     // REDIS
     services.Configure<RedisSettings>(
