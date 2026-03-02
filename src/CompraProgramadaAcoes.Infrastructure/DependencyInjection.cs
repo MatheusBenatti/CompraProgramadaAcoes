@@ -6,12 +6,13 @@ using StackExchange.Redis;
 using Confluent.Kafka;
 using CompraProgramadaAcoes.Application.UseCases;
 using CompraProgramadaAcoes.Domain.Interfaces;
+using CompraProgramadaAcoes.Domain.Services;
 using CompraProgramadaAcoes.Infrastructure.Cache;
 using CompraProgramadaAcoes.Infrastructure.Message;
-using CompraProgramadaAcoes.Infrastructure.Persistence.Repositories;
+using CompraProgramadaAcoes.Infrastructure.Repositories;
+using CompraProgramadaAcoes.Infrastructure.Services;
 using CompraProgramadaAcoes.Domain.Factories;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
-using CompraProgramadaAcoes.Infrastructure.Persistence;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
@@ -24,7 +25,7 @@ public static class DependencyInjection
     var connectionString = configuration.GetConnectionString("Default");
 
     // DATABASE (MySQL)
-    services.AddDbContext<AppDbContext>(options =>
+    services.AddDbContext<ApplicationDbContext>(options =>
         options.UseMySql(
             connectionString,
             ServerVersion.AutoDetect(connectionString),
@@ -36,6 +37,16 @@ public static class DependencyInjection
     services.AddScoped<IContaGraficaRepository, ContaGraficaRepository>();
     services.AddScoped<ICustodiaRepository, CustodiaRepository>();
     services.AddScoped<IHistoricoValorMensalRepository, HistoricoValorMensalRepository>();
+    services.AddScoped<ICestaRecomendacaoRepository, CestaRecomendacaoRepository>();
+    services.AddScoped<IOrdemCompraRepository, OrdemCompraRepository>();
+    services.AddScoped<IDistribuicaoRepository, DistribuicaoRepository>();
+    services.AddScoped<IContaMasterRepository, ContaMasterRepository>();
+    services.AddScoped<IEventoIRRepository, EventoIRRepository>();
+
+    // Domain Services
+    services.AddScoped<ICalculadoraDistribuicao, CalculadoraDistribuicao>();
+    services.AddScoped<IEventPublisher, DomainEventPublisher>();
+    services.AddScoped<ICotacaoService, CotacaoService>();
 
     // Factories
     services.AddScoped<IClienteFactory, ClienteFactory>();
@@ -59,7 +70,6 @@ public static class DependencyInjection
 
     services.AddScoped<ICacheService, RedisCacheService>();
 
-
     // KAFKA - CONFIGURAÇÃO
     services.Configure<KafkaSettings>(
         configuration.GetSection("Kafka"));
@@ -77,14 +87,12 @@ public static class DependencyInjection
 
     services.AddScoped<IMessagePublisher, KafkaPublisher>();
 
-
     // KAFKA - CONSUMER (apenas em ambiente de produção/Docker)
     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
     if (environment != "Development")
     {
       services.AddHostedService<KafkaConsumerBackgroundService>();
     }
-
 
     return services;
   }

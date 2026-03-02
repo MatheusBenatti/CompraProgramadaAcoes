@@ -111,7 +111,7 @@ public class RealizarAdesaoTests
 
         _custodiaRepositoryMock
             .Setup(x => x.AddAsync(custodia))
-            .ReturnsAsync(custodia);
+            .Returns(Task.CompletedTask);
 
         // Act
         var result = await _realizarAdesao.ExecuteAsync(request);
@@ -170,7 +170,7 @@ public class RealizarAdesaoTests
         _contaGraficaRepositoryMock.Setup(x => x.AddAsync(contaGrafica)).ReturnsAsync(contaGrafica);
 
         _custodiaFactoryMock.Setup(x => x.Criar(contaGrafica.Id)).Returns(custodia);
-        _custodiaRepositoryMock.Setup(x => x.AddAsync(custodia)).ReturnsAsync(custodia);
+        _custodiaRepositoryMock.Setup(x => x.AddAsync(custodia)).Returns(Task.CompletedTask);
 
         // Act
         await _realizarAdesao.ExecuteAsync(request);

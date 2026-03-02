@@ -13,12 +13,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompraProgramadaAcoes.Infra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompraProgramadaAcoes.Api", "src\CompraProgramadaAcoes.Api\CompraProgramadaAcoes.Api.csproj", "{DAD8FD11-F4D8-4FD2-8343-CF25C242207E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompraProgramadaAcoes.Workers", "src\CompraProgramadaAcoes.Workers\CompraProgramadaAcoes.Workers.csproj", "{5983B272-1E35-498B-99E2-82D25C021EC7}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cotacoes", "cotacoes", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+	ProjectSection(SolutionItems) = preProject
+		cotacoes\COTAHIST_D27022026.TXT = cotacoes\COTAHIST_D27022026.TXT
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompraProgramadaAcoes.UnitTests", "tests\CompraProgramadaAcoes.UnitTests\CompraProgramadaAcoes.UnitTests.csproj", "{26B58523-1FFC-44E7-B1FE-4863E7A76332}"
 EndProject
@@ -80,6 +87,18 @@ Global
 		{DAD8FD11-F4D8-4FD2-8343-CF25C242207E}.Release|x64.Build.0 = Release|Any CPU
 		{DAD8FD11-F4D8-4FD2-8343-CF25C242207E}.Release|x86.ActiveCfg = Release|Any CPU
 		{DAD8FD11-F4D8-4FD2-8343-CF25C242207E}.Release|x86.Build.0 = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|x64.Build.0 = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Debug|x86.Build.0 = Debug|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|x64.ActiveCfg = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|x64.Build.0 = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|x86.ActiveCfg = Release|Any CPU
+		{5983B272-1E35-498B-99E2-82D25C021EC7}.Release|x86.Build.0 = Release|Any CPU
 		{26B58523-1FFC-44E7-B1FE-4863E7A76332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26B58523-1FFC-44E7-B1FE-4863E7A76332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26B58523-1FFC-44E7-B1FE-4863E7A76332}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -101,6 +120,7 @@ Global
 		{DE03B177-AAE7-43D7-8E2D-636F2AB088FC} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{93547DDB-F4E0-4E7F-9250-DBA2BC145A39} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{DAD8FD11-F4D8-4FD2-8343-CF25C242207E} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{5983B272-1E35-498B-99E2-82D25C021EC7} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{26B58523-1FFC-44E7-B1FE-4863E7A76332} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

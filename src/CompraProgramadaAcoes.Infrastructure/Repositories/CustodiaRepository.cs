@@ -1,17 +1,21 @@
-using Microsoft.EntityFrameworkCore;
-using CompraProgramadaAcoes.Domain.Entities;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace CompraProgramadaAcoes.Infrastructure.Persistence.Repositories;
+namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class CustodiaRepository(AppDbContext context) : ICustodiaRepository
+public class CustodiaRepository : ICustodiaRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly ApplicationDbContext _context;
+
+    public CustodiaRepository(ApplicationDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<List<Custodia>> ObterPorContaGraficaAsync(long contaGraficaId)
     {
         return await _context.Custodias
-            .Include(c => c.ContaGrafica)
             .Where(c => c.ContaGraficaId == contaGraficaId)
             .ToListAsync();
     }
@@ -19,23 +23,20 @@ public class CustodiaRepository(AppDbContext context) : ICustodiaRepository
     public async Task<List<Custodia>> ObterPorContaMasterAsync(long contaMasterId)
     {
         return await _context.Custodias
-            .Include(c => c.ContaGrafica)
-            .Where(c => c.ContaGrafica.Tipo == "MASTER")
+            .Where(c => c.ContaGraficaId == contaMasterId)
             .ToListAsync();
     }
 
     public async Task<Custodia?> ObterPorTickerAsync(long contaGraficaId, string ticker)
     {
         return await _context.Custodias
-            .Include(c => c.ContaGrafica)
             .FirstOrDefaultAsync(c => c.ContaGraficaId == contaGraficaId && c.Ticker == ticker);
     }
 
     public async Task<Custodia?> ObterPorTickerMasterAsync(long contaMasterId, string ticker)
     {
         return await _context.Custodias
-            .Include(c => c.ContaGrafica)
-            .FirstOrDefaultAsync(c => c.ContaGrafica.Tipo == "MASTER" && c.Ticker == ticker);
+            .FirstOrDefaultAsync(c => c.ContaGraficaId == contaMasterId && c.Ticker == ticker);
     }
 
     public async Task AddAsync(Custodia custodia)
@@ -43,10 +44,10 @@ public class CustodiaRepository(AppDbContext context) : ICustodiaRepository
         await _context.Custodias.AddAsync(custodia);
     }
 
-    public Task UpdateAsync(Custodia custodia)
+    public async Task UpdateAsync(Custodia custodia)
     {
         _context.Custodias.Update(custodia);
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 
     public async Task<int> SaveChangesAsync()

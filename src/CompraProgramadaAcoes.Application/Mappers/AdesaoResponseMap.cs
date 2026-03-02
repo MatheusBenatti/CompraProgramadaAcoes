@@ -14,13 +14,13 @@ namespace CompraProgramadaAcoes.Application.Mappers
       Email = cliente.Email,
       ValorMensal = cliente.ValorMensal,
       Ativo = cliente.Ativo,
-      DataAdesao = cliente.DataAdesao.ToString(Format),
+      DataAdesao = cliente.DataAdesao,
       ContaGrafica = new ContaGraficaResponse
       {
         Id = contaGrafica.Id,
         NumeroConta = contaGrafica.NumeroConta!,
         Tipo = contaGrafica.Tipo,
-        DataCriacao = contaGrafica.DataCriacao.ToString(Format)
+        DataCriacao = contaGrafica.DataCriacao
       }
     };
   }

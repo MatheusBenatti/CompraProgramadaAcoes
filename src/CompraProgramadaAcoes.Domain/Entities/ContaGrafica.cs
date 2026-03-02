@@ -17,4 +17,14 @@ public class ContaGrafica(long clienteId)
             
         NumeroConta = $"FLH-{DateTime.UtcNow:yyyyMMdd}-{Id:D6}";
     }
+
+    public void AtualizarTipo(string tipo)
+    {
+        Tipo = tipo;
+    }
+
+    public void AtualizarNumeroConta(string numeroConta)
+    {
+        NumeroConta = numeroConta;
+    }
 }

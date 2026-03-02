@@ -1,4 +1,6 @@
 using CompraProgramadaAcoes.Infrastructure;
+using CompraProgramadaAcoes.Application.Services;
+using CompraProgramadaAcoes.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Registrar serviços da aplicação
+builder.Services.AddSingleton<CotahistParser>();
+builder.Services.AddScoped<IMotorCompraProgramada, MotorCompraProgramada>();
+builder.Services.AddScoped<IMotorRebalanceamento, MotorRebalanceamento>();
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
