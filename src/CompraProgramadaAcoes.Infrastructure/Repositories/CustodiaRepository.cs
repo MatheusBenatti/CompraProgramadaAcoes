@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class CustodiaRepository : ICustodiaRepository
+public class CustodiaRepository(AppDbContext context) : ICustodiaRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public CustodiaRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<List<Custodia>> ObterPorContaGraficaAsync(long contaGraficaId)
+  public async Task<List<Custodia>> ObterPorContaGraficaAsync(long contaGraficaId)
     {
         return await _context.Custodias
             .Where(c => c.ContaGraficaId == contaGraficaId)

@@ -13,6 +13,7 @@ using CompraProgramadaAcoes.Infrastructure.Repositories;
 using CompraProgramadaAcoes.Infrastructure.Services;
 using CompraProgramadaAcoes.Domain.Factories;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
@@ -25,7 +26,7 @@ public static class DependencyInjection
     var connectionString = configuration.GetConnectionString("Default");
 
     // DATABASE (MySQL)
-    services.AddDbContext<ApplicationDbContext>(options =>
+    services.AddDbContext<AppDbContext>(options =>
         options.UseMySql(
             connectionString,
             ServerVersion.AutoDetect(connectionString),

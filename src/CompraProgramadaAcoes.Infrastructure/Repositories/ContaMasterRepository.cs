@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class ContaMasterRepository : IContaMasterRepository
+public class ContaMasterRepository(AppDbContext context) : IContaMasterRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public ContaMasterRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<ContaGrafica> ObterContaMasterAsync()
+  public async Task<ContaGrafica> ObterContaMasterAsync()
     {
         var conta = await _context.ContasGraficas
             .Include(cg => cg.Custodias)

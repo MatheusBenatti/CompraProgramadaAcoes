@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class OrdemCompraRepository : IOrdemCompraRepository
+public class OrdemCompraRepository(AppDbContext context) : IOrdemCompraRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public OrdemCompraRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<OrdemCompra?> ObterPorIdAsync(long id)
+  public async Task<OrdemCompra?> ObterPorIdAsync(long id)
     {
         return await _context.OrdensCompra
             .Include(o => o.Distribuicoes)

@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class CestaRecomendacaoRepository : ICestaRecomendacaoRepository
+public class CestaRecomendacaoRepository(AppDbContext context) : ICestaRecomendacaoRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public CestaRecomendacaoRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<CestaRecomendacao?> ObterCestaVigenteAsync()
+  public async Task<CestaRecomendacao?> ObterCestaVigenteAsync()
     {
         return await _context.CestasRecomendacao
             .Include(c => c.Itens)

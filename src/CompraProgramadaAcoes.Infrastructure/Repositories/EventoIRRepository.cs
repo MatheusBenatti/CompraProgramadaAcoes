@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class EventoIRRepository : IEventoIRRepository
+public class EventoIRRepository(AppDbContext context) : IEventoIRRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public EventoIRRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<EventoIR?> ObterPorIdAsync(long id)
+  public async Task<EventoIR?> ObterPorIdAsync(long id)
     {
         return await _context.EventosIR
             .Include(e => e.Cliente)

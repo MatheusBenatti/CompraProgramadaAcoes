@@ -1,21 +1,17 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class HistoricoValorMensalRepository : IHistoricoValorMensalRepository
+public class HistoricoValorMensalRepository(AppDbContext context) : IHistoricoValorMensalRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public HistoricoValorMensalRepository(ApplicationDbContext context)
+  public async Task<HistoricoValorMensal?> ObterPorClienteIdAsync(long clienteId)
     {
-        _context = context;
-    }
-
-    public async Task<HistoricoValorMensal?> ObterPorClienteIdAsync(long clienteId)
-    {
-        return await _context.HistoricosValorMensal
+        return await _context.HistoricoValoresMensais
             .Where(h => h.ClienteId == clienteId)
             .OrderByDescending(h => h.DataAlteracao)
             .FirstOrDefaultAsync();
@@ -23,7 +19,7 @@ public class HistoricoValorMensalRepository : IHistoricoValorMensalRepository
 
     public async Task<List<HistoricoValorMensal>> ObterHistoricoAsync(long clienteId)
     {
-        return await _context.HistoricosValorMensal
+        return await _context.HistoricoValoresMensais
             .Where(h => h.ClienteId == clienteId)
             .OrderByDescending(h => h.DataAlteracao)
             .ToListAsync();
@@ -31,7 +27,7 @@ public class HistoricoValorMensalRepository : IHistoricoValorMensalRepository
 
     public async Task<HistoricoValorMensal> AddAsync(HistoricoValorMensal historico)
     {
-        await _context.HistoricosValorMensal.AddAsync(historico);
+        await _context.HistoricoValoresMensais.AddAsync(historico);
         return historico;
     }
 

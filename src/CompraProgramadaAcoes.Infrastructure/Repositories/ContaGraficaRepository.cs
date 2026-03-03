@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class ContaGraficaRepository : IContaGraficaRepository
+public class ContaGraficaRepository(AppDbContext context) : IContaGraficaRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public ContaGraficaRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<ContaGrafica?> GetByIdAsync(long id)
+  public async Task<ContaGrafica?> GetByIdAsync(long id)
     {
         return await _context.ContasGraficas
             .Include(cg => cg.Cliente)

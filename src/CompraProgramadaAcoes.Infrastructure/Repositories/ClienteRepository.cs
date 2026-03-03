@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class ClienteRepository : IClienteRepository
+public class ClienteRepository(AppDbContext context) : IClienteRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public ClienteRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<Cliente?> GetByIdAsync(long id)
+  public async Task<Cliente?> GetByIdAsync(long id)
     {
         return await _context.Clientes
             .Include(c => c.ContaGrafica)

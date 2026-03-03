@@ -1,19 +1,15 @@
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompraProgramadaAcoes.Infrastructure.Repositories;
 
-public class DistribuicaoRepository : IDistribuicaoRepository
+public class DistribuicaoRepository(AppDbContext context) : IDistribuicaoRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly AppDbContext _context = context;
 
-    public DistribuicaoRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<Distribuicao?> ObterPorIdAsync(long id)
+  public async Task<Distribuicao?> ObterPorIdAsync(long id)
     {
         return await _context.Distribuicoes
             .Include(d => d.OrdemCompra)
