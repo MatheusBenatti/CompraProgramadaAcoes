@@ -1,3 +1,5 @@
+using CompraProgramadaAcoes.Application.DTOs;
+using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Domain.Entities;
 using System.Text;
 using System.Globalization;
@@ -6,12 +8,23 @@ namespace CompraProgramadaAcoes.Application.Services;
 
 public class CotahistParser
 {
+    private readonly CestaCacheService _cestaCacheService;
+    private readonly CotacaoCacheService _cotacaoCacheService;
+
+    public CotahistParser(CestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
+    {
+        _cestaCacheService = cestaCacheService;
+        _cotacaoCacheService = cotacaoCacheService;
+    }
+
     /// <summary>
     /// Lê e faz parse de um arquivo COTAHIST da B3.
     /// Retorna apenas registros de detalhe (TIPREG = 01)
     /// filtrados por mercado a vista (010) e fracionário (020).
+    /// Durante o parse, gera cesta Top Five baseada no volume do dia
+    /// e salva as cotações dos tickers da cesta para consultas rápidas.
     /// </summary>
-    public virtual IEnumerable<CotacaoB3> ParseArquivo(string caminhoArquivo)
+    public virtual async Task<IEnumerable<CotacaoB3>> ParseArquivoAsync(string caminhoArquivo)
     {
         var cotacoes = new List<CotacaoB3>();
         
@@ -58,7 +71,26 @@ public class CotahistParser
             cotacoes.Add(cotacao);
         }
 
+        // Gerar cesta Top Five baseada no volume do dia (sempre atualiza)
+        var cestaFoiAtualizada = await _cestaCacheService.GerarCestaDoDiaAsync(cotacoes);
+        
+        // Salvar cotações dos tickers da cesta no Redis para consultas rápidas
+        var cesta = await _cestaCacheService.ObterCestaAsync();
+        if (cesta?.Itens != null)
+        {
+            var tickersCesta = cesta.Itens.Select(i => i.Ticker);
+            await _cotacaoCacheService.SalvarCotacoesDaCestaAsync(cotacoes, tickersCesta);
+        }
+
         return cotacoes;
+    }
+
+    /// <summary>
+    /// Versão síncrona para compatibilidade
+    /// </summary>
+    public virtual IEnumerable<CotacaoB3> ParseArquivo(string caminhoArquivo)
+    {
+        return ParseArquivoAsync(caminhoArquivo).GetAwaiter().GetResult();
     }
 
     /// <summary>

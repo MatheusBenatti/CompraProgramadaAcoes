@@ -14,6 +14,7 @@ using CompraProgramadaAcoes.Infrastructure.Services;
 using CompraProgramadaAcoes.Domain.Factories;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Infrastructure.Persistence;
+using CompraProgramadaAcoes.Application.Services;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
@@ -70,6 +71,10 @@ public static class DependencyInjection
     });
 
     services.AddScoped<ICacheService, RedisCacheService>();
+    services.AddScoped<CestaCacheService>();
+    services.AddScoped<CotacaoCacheService>();
+    services.AddScoped<TopFiveAnalyzer>();
+    services.AddHostedService<CestaInitializationService>();
 
     // KAFKA - CONFIGURAÇÃO
     services.Configure<KafkaSettings>(

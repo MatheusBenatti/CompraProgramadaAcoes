@@ -1,5 +1,6 @@
 using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,8 @@ public class MotorCompraProgramada(
       IClienteRepository clienteRepository,
       IContaMasterRepository contaMasterRepository,
       ICustodiaRepository custodiaRepository,
-      ICestaRecomendacaoRepository cestaRepository,
+      CestaCacheService cestaCacheService,
+      CotacaoCacheService cotacaoCacheService,
       IOrdemCompraRepository ordemCompraRepository,
       IDistribuicaoRepository distribuicaoRepository,
       IMessagePublisher messagePublisher,
@@ -20,13 +22,14 @@ public class MotorCompraProgramada(
     private readonly IClienteRepository _clienteRepository = clienteRepository;
     private readonly IContaMasterRepository _contaMasterRepository = contaMasterRepository;
     private readonly ICustodiaRepository _custodiaRepository = custodiaRepository;
-    private readonly ICestaRecomendacaoRepository _cestaRepository = cestaRepository;
+    private readonly CestaCacheService _cestaCacheService = cestaCacheService;
+    private readonly CotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
     private readonly IOrdemCompraRepository _ordemCompraRepository = ordemCompraRepository;
     private readonly IDistribuicaoRepository _distribuicaoRepository = distribuicaoRepository;
     private readonly IMessagePublisher _messagePublisher = messagePublisher;
     private readonly CotahistParser _cotahistParser = cotahistParser;
     private readonly ILogger<MotorCompraProgramada> _logger = logger;
-  private readonly string _pastaCotacoes = pastaCotacoes;
+    private readonly string _pastaCotacoes = pastaCotacoes;
 
   public async Task ExecutarComprasProgramadasAsync(DateTime dataReferencia)
     {
@@ -45,29 +48,29 @@ public class MotorCompraProgramada(
                 return;
             }
 
-            // 3. Obter cesta vigente
-            var cestaVigente = await _cestaRepository.ObterCestaVigenteAsync();
+            // 3. Obter cesta vigente do Redis
+            var cestaVigente = await _cestaCacheService.ObterCestaAsync();
             if (cestaVigente == null)
             {
-                _logger.LogWarning("Nenhuma cesta vigente encontrada");
+                _logger.LogWarning("Nenhuma cesta vigente encontrada no Redis");
                 return;
             }
 
             // 4. Calcular valor total do aporte do dia (1/3 do valor mensal)
             var valorTotalAporte = clientesAtivos.Sum(c => c.ValorMensal / 3);
 
-            // 5. Obter cotações de fechamento dos ativos da cesta
+            // 5. Obter cotações de fechamento dos ativos da cesta do Redis
             var tickers = cestaVigente.Itens.Select(i => i.Ticker);
-            var cotacoes = _cotahistParser.ObterCotacoesFechamento(_pastaCotacoes, tickers);
+            var precosFechamento = await _cotacaoCacheService.ObterPrecosFechamentoAsync(tickers);
             
-            if (cotacoes.Count != tickers.Count())
+            if (precosFechamento.Count != tickers.Count())
             {
-                _logger.LogError("Não foi possível obter todas as cotações necessárias");
+                _logger.LogError("Não foi possível obter todas as cotações necessárias do Redis");
                 return;
             }
 
             // 6. Calcular compras consolidadas
-            var comprasCalculadas = CalcularComprasConsolidadas(cestaVigente, cotacoes, valorTotalAporte);
+            var comprasCalculadas = CalcularComprasConsolidadas(cestaVigente, precosFechamento, valorTotalAporte);
 
             // 7. Obter conta master e verificar saldo
             var contaMaster = await _contaMasterRepository.ObterContaMasterAsync();
@@ -113,21 +116,21 @@ public class MotorCompraProgramada(
     }
 
     private Dictionary<string, (int Quantidade, decimal Valor)> CalcularComprasConsolidadas(
-        CestaRecomendacao cesta, Dictionary<string, CotacaoB3> cotacoes, decimal valorTotal)
+        CestaCacheDTO cesta, Dictionary<string, decimal> precos, decimal valorTotal)
     {
         var resultado = new Dictionary<string, (int Quantidade, decimal Valor)>();
 
         foreach (var item in cesta.Itens)
         {
-            if (!cotacoes.TryGetValue(item.Ticker, out var cotacao))
+            if (!precos.TryGetValue(item.Ticker, out var preco))
             {
                 _logger.LogError($"Cotação não encontrada para o ticker {item.Ticker}");
                 continue;
             }
             
             var valorPorAtivo = valorTotal * (item.Percentual / 100);
-            var quantidade = (int)Math.Floor(valorPorAtivo / cotacao.PrecoFechamento);
-            var valorReal = quantidade * cotacao.PrecoFechamento;
+            var quantidade = preco > 0 ? (int)Math.Floor(valorPorAtivo / preco) : 0;
+            var valorReal = quantidade * preco;
 
             resultado[item.Ticker] = (quantidade, valorReal);
         }
@@ -203,7 +206,7 @@ public class MotorCompraProgramada(
     }
 
     private async Task DistribuirAtivosParaClientes(
-        List<OrdemCompra> ordens, List<Cliente> clientes, CestaRecomendacao cesta)
+        List<OrdemCompra> ordens, List<Cliente> clientes, CestaCacheDTO cesta)
     {
         // Calcular total de aportes do dia (1/3 de cada cliente)
         var totalAportes = clientes.Sum(c => c.ValorMensal / 3);
