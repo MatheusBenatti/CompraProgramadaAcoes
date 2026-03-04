@@ -13,6 +13,7 @@ using CompraProgramadaAcoes.Infrastructure.Repositories;
 using CompraProgramadaAcoes.Infrastructure.Services;
 using CompraProgramadaAcoes.Domain.Factories;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Infrastructure.Persistence;
 using CompraProgramadaAcoes.Application.Services;
 
@@ -56,9 +57,9 @@ public static class DependencyInjection
     services.AddScoped<ICustodiaFactory, CustodiaFactory>();
 
     // Use Cases
-    services.AddScoped<RealizarAdesao>();
-    services.AddScoped<RealizarSaida>();
-    services.AddScoped<AlterarValorMensal>();
+    services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IRealizarAdesao, CompraProgramadaAcoes.Application.UseCases.RealizarAdesao>();
+    services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IRealizarSaida, CompraProgramadaAcoes.Application.UseCases.RealizarSaida>();
+    services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IAlterarValorMensal, CompraProgramadaAcoes.Application.UseCases.AlterarValorMensal>();
 
     // REDIS
     services.Configure<RedisSettings>(
@@ -71,8 +72,9 @@ public static class DependencyInjection
     });
 
     services.AddScoped<ICacheService, RedisCacheService>();
-    services.AddScoped<CestaCacheService>();
+    services.AddScoped<ICestaCacheService, CestaCacheService>();
     services.AddScoped<CotacaoCacheService>();
+    services.AddScoped<CotahistParser>();
     services.AddScoped<TopFiveAnalyzer>();
     services.AddHostedService<CestaInitializationService>();
 

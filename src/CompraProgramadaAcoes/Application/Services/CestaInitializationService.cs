@@ -27,12 +27,6 @@ public class CestaInitializationService : IHostedService
             var cestaCacheService = scope.ServiceProvider.GetRequiredService<CestaCacheService>();
             var cestaExistente = await cestaCacheService.ObterCestaAsync();
             
-            if (cestaExistente != null)
-            {
-                _logger.LogInformation("Cesta Top Five já existe no Redis. Pulando inicialização.");
-                return;
-            }
-
             // Tentar gerar cesta a partir do arquivo COTAHIST mais recente
             var cotahistParser = scope.ServiceProvider.GetRequiredService<CotahistParser>();
             var pastaCotacoes = "cotacoes";

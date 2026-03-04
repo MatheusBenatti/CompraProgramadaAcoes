@@ -4,7 +4,7 @@ using CompraProgramadaAcoes.Domain.Entities;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
-public class CestaCacheService
+public class CestaCacheService : ICestaCacheService
 {
     private readonly ICacheService _cacheService;
     private const string CESTA_KEY = "cesta:top_five";

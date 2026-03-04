@@ -10,7 +10,7 @@ public class MotorCompraProgramada(
       IClienteRepository clienteRepository,
       IContaMasterRepository contaMasterRepository,
       ICustodiaRepository custodiaRepository,
-      CestaCacheService cestaCacheService,
+      ICestaCacheService cestaCacheService,
       CotacaoCacheService cotacaoCacheService,
       IOrdemCompraRepository ordemCompraRepository,
       IDistribuicaoRepository distribuicaoRepository,
@@ -22,7 +22,7 @@ public class MotorCompraProgramada(
     private readonly IClienteRepository _clienteRepository = clienteRepository;
     private readonly IContaMasterRepository _contaMasterRepository = contaMasterRepository;
     private readonly ICustodiaRepository _custodiaRepository = custodiaRepository;
-    private readonly CestaCacheService _cestaCacheService = cestaCacheService;
+    private readonly ICestaCacheService _cestaCacheService = cestaCacheService;
     private readonly CotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
     private readonly IOrdemCompraRepository _ordemCompraRepository = ordemCompraRepository;
     private readonly IDistribuicaoRepository _distribuicaoRepository = distribuicaoRepository;

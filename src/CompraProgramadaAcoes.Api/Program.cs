@@ -11,7 +11,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Registrar serviços da aplicação
-builder.Services.AddSingleton<CotahistParser>();
 builder.Services.AddScoped<IMotorCompraProgramada, MotorCompraProgramada>();
 builder.Services.AddScoped<IMotorRebalanceamento, MotorRebalanceamento>();
 

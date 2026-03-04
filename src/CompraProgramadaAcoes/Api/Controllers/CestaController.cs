@@ -1,4 +1,5 @@
 using CompraProgramadaAcoes.Application.DTOs;
+using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,10 @@ namespace CompraProgramadaAcoes.Api.Controllers;
 [Route("api/[controller]")]
 public class CestaController : ControllerBase
 {
-    private readonly CestaCacheService _cestaCacheService;
+    private readonly ICestaCacheService _cestaCacheService;
     private readonly CotacaoCacheService _cotacaoCacheService;
 
-    public CestaController(CestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
+    public CestaController(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
     {
         _cestaCacheService = cestaCacheService;
         _cotacaoCacheService = cotacaoCacheService;

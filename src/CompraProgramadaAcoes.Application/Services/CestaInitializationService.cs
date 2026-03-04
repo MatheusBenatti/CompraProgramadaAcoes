@@ -27,7 +27,7 @@ public class CestaInitializationService : IHostedService
             using var scope = _serviceProvider.CreateScope();
             
             // Verificar se já existe cesta no Redis
-            var cestaCacheService = scope.ServiceProvider.GetRequiredService<CestaCacheService>();
+            var cestaCacheService = scope.ServiceProvider.GetRequiredService<ICestaCacheService>();
             var cestaExistente = await cestaCacheService.ObterCestaAsync();
             
             if (cestaExistente != null)
@@ -88,7 +88,7 @@ public class CestaInitializationService : IHostedService
             try
             {
                 using var scope = _serviceProvider.CreateScope();
-                var cestaCacheService = scope.ServiceProvider.GetRequiredService<CestaCacheService>();
+                var cestaCacheService = scope.ServiceProvider.GetRequiredService<ICestaCacheService>();
                 await GerarCestaPadraoAsync(cestaCacheService);
             }
             catch (Exception fallbackEx)
@@ -98,7 +98,7 @@ public class CestaInitializationService : IHostedService
         }
     }
 
-    private async Task GerarCestaPadraoAsync(CestaCacheService cestaCacheService)
+    private async Task GerarCestaPadraoAsync(ICestaCacheService cestaCacheService)
     {
         _logger.LogInformation("Gerando cesta Top Five padrão como fallback...");
         await cestaCacheService.InicializarCestaPadraoAsync();

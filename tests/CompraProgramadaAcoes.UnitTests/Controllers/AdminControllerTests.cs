@@ -1,6 +1,8 @@
 using CompraProgramadaAcoes.Api.Controllers;
+using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.Services;
+using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Domain.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +16,7 @@ public class AdminControllerTests
     private readonly Mock<IContaGraficaRepository> _contaGraficaRepositoryMock;
     private readonly Mock<ICustodiaRepository> _custodiaRepositoryMock;
     private readonly Mock<ICacheService> _cacheServiceMock;
-    private readonly Mock<CestaCacheService> _cestaCacheServiceMock;
+    private readonly Mock<ICestaCacheService> _cestaCacheServiceMock;
     private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
     private readonly AdminController _controller;
@@ -25,14 +27,15 @@ public class AdminControllerTests
         _contaGraficaRepositoryMock = new Mock<IContaGraficaRepository>();
         _custodiaRepositoryMock = new Mock<ICustodiaRepository>();
         _cacheServiceMock = new Mock<ICacheService>();
-        _cestaCacheServiceMock = new Mock<CestaCacheService>(_cacheServiceMock.Object);
+        _cestaCacheServiceMock = new Mock<ICestaCacheService>();
         _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
         _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object);
         _controller = new AdminController(
             _cestaRepositoryMock.Object,
             _contaGraficaRepositoryMock.Object,
             _custodiaRepositoryMock.Object,
-            _cotahistParserMock.Object);
+            _cotahistParserMock.Object,
+            _cestaCacheServiceMock.Object);
     }
 
     [Fact]
@@ -62,6 +65,10 @@ public class AdminControllerTests
 
         _cestaRepositoryMock
             .Setup(x => x.SaveChangesAsync())
+            .Returns(Task.CompletedTask);
+
+        _cestaCacheServiceMock
+            .Setup(x => x.SalvarCestaAsync(It.IsAny<CestaCacheDTO>()))
             .Returns(Task.CompletedTask);
 
         // Act
@@ -119,6 +126,10 @@ public class AdminControllerTests
 
         _cestaRepositoryMock
             .Setup(x => x.SaveChangesAsync())
+            .Returns(Task.CompletedTask);
+
+        _cestaCacheServiceMock
+            .Setup(x => x.SalvarCestaAsync(It.IsAny<CestaCacheDTO>()))
             .Returns(Task.CompletedTask);
 
         // Act

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Domain.Entities;
 using CompraProgramadaAcoes.Application.Services;
 using CompraProgramadaAcoes.Application.DTOs;
@@ -14,17 +15,20 @@ public class AdminController : ControllerBase
     private readonly IContaGraficaRepository _contaGraficaRepository;
     private readonly ICustodiaRepository _custodiaRepository;
     private readonly CotahistParser _cotahistParser;
+    private readonly ICestaCacheService _cestaCacheService;
 
     public AdminController(
         ICestaRecomendacaoRepository cestaRepository,
         IContaGraficaRepository contaGraficaRepository,
         ICustodiaRepository custodiaRepository,
-        CotahistParser cotahistParser)
+        CotahistParser cotahistParser,
+        ICestaCacheService cestaCacheService)
     {
         _cestaRepository = cestaRepository;
         _contaGraficaRepository = contaGraficaRepository;
         _custodiaRepository = custodiaRepository;
         _cotahistParser = cotahistParser;
+        _cestaCacheService = cestaCacheService;
     }
 
     /// <summary>
@@ -84,6 +88,20 @@ public class AdminController : ControllerBase
 
             await _cestaRepository.AddAsync(novaCesta);
             await _cestaRepository.SaveChangesAsync();
+
+            // Converter cesta para DTO e salvar no cache
+            var cestaDTO = new CestaCacheDTO
+            {
+                Nome = novaCesta.Nome,
+                DataCriacao = novaCesta.DataCriacao,
+                Ativa = novaCesta.Ativa,
+                Itens = novaCesta.Itens.Select(i => new ItemCestaCacheDTO
+                {
+                    Ticker = i.Ticker,
+                    Percentual = i.Percentual
+                }).ToList()
+            };
+            await _cestaCacheService.SalvarCestaAsync(cestaDTO);
 
             var response = new CestaAdminResponse
             {

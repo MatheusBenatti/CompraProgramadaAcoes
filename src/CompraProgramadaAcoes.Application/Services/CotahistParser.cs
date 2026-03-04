@@ -8,10 +8,10 @@ namespace CompraProgramadaAcoes.Application.Services;
 
 public class CotahistParser
 {
-    private readonly CestaCacheService _cestaCacheService;
+    private readonly ICestaCacheService _cestaCacheService;
     private readonly CotacaoCacheService _cotacaoCacheService;
 
-    public CotahistParser(CestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
+    public CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
     {
         _cestaCacheService = cestaCacheService;
         _cotacaoCacheService = cotacaoCacheService;
