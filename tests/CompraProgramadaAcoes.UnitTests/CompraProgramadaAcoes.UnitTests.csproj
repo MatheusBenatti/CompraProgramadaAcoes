@@ -23,6 +23,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Application\CompraProgramadaAcoes.Application.csproj" />
     <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Domain\CompraProgramadaAcoes.Domain.csproj" />
+    <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Api\CompraProgramadaAcoes.Api.csproj" />
+    <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Infrastructure\CompraProgramadaAcoes.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Workers\CompraProgramadaAcoes.Workers.csproj" />
   </ItemGroup>
 
 </Project>

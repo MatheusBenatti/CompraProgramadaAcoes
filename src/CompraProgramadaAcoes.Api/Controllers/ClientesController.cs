@@ -1,17 +1,17 @@
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Application.Exceptions;
-using CompraProgramadaAcoes.Application.UseCases;
+using CompraProgramadaAcoes.Application.Interfaces.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClientesController(RealizarAdesao realizarAdesao, RealizarSaida realizarSaida, AlterarValorMensal alterarValorMensal) : ControllerBase
+public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida realizarSaida, IAlterarValorMensal alterarValorMensal) : ControllerBase
 {
-  private readonly RealizarAdesao _realizarAdesao = realizarAdesao;
-  private readonly RealizarSaida _realizarSaida = realizarSaida;
-  private readonly AlterarValorMensal _alterarValorMensal = alterarValorMensal;
+  private readonly IRealizarAdesao _realizarAdesao = realizarAdesao;
+  private readonly IRealizarSaida _realizarSaida = realizarSaida;
+  private readonly IAlterarValorMensal _alterarValorMensal = alterarValorMensal;
 
   /// <summary>
   /// Realiza a adesão de um novo cliente ao produto

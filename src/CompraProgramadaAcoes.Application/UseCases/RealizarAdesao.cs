@@ -1,6 +1,7 @@
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Application.Exceptions;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces.UseCases;
 using CompraProgramadaAcoes.Application.Mappers;
 using CompraProgramadaAcoes.Domain.Interfaces;
 
@@ -12,7 +13,7 @@ public class RealizarAdesao(
       ICustodiaRepository custodiaRepository,
       IClienteFactory clienteFactory,
       IContaGraficaFactory contaGraficaFactory,
-      ICustodiaFactory custodiaFactory)
+      ICustodiaFactory custodiaFactory) : IRealizarAdesao
 {
   private readonly IClienteRepository _clienteRepository = clienteRepository;
   private readonly IContaGraficaRepository _contaGraficaRepository = contaGraficaRepository;

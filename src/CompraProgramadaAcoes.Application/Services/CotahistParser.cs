@@ -11,7 +11,7 @@ public class CotahistParser
     /// Retorna apenas registros de detalhe (TIPREG = 01)
     /// filtrados por mercado a vista (010) e fracionário (020).
     /// </summary>
-    public IEnumerable<CotacaoB3> ParseArquivo(string caminhoArquivo)
+    public virtual IEnumerable<CotacaoB3> ParseArquivo(string caminhoArquivo)
     {
         var cotacoes = new List<CotacaoB3>();
         
@@ -76,7 +76,7 @@ public class CotahistParser
     /// Obtém a cotação de fechamento mais recente de um ticker específico.
     /// Busca na pasta cotacoes/ o arquivo mais recente.
     /// </summary>
-    public CotacaoB3? ObterCotacaoFechamento(string pastaCotacoes, string ticker)
+    public virtual CotacaoB3? ObterCotacaoFechamento(string pastaCotacoes, string ticker)
     {
         var arquivos = Directory.GetFiles(pastaCotacoes, "COTAHIST_D*.TXT")
             .OrderByDescending(f => f)
@@ -100,7 +100,7 @@ public class CotahistParser
     /// <summary>
     /// Obtém cotações de fechamento para múltiplos tickers.
     /// </summary>
-    public Dictionary<string, CotacaoB3> ObterCotacoesFechamento(string pastaCotacoes, IEnumerable<string> tickers)
+    public virtual Dictionary<string, CotacaoB3> ObterCotacoesFechamento(string pastaCotacoes, IEnumerable<string> tickers)
     {
         var resultado = new Dictionary<string, CotacaoB3>();
         

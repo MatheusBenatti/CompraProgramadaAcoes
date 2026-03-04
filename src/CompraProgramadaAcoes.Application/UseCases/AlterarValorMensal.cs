@@ -1,11 +1,12 @@
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Application.Exceptions;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces.UseCases;
 using CompraProgramadaAcoes.Domain.Entities;
 
 namespace CompraProgramadaAcoes.Application.UseCases;
 
-public class AlterarValorMensal(IClienteRepository clienteRepository, IHistoricoValorMensalRepository historicoRepository)
+public class AlterarValorMensal(IClienteRepository clienteRepository, IHistoricoValorMensalRepository historicoRepository) : IAlterarValorMensal
 {
   private readonly IClienteRepository _clienteRepository = clienteRepository;
   private readonly IHistoricoValorMensalRepository _historicoRepository = historicoRepository;

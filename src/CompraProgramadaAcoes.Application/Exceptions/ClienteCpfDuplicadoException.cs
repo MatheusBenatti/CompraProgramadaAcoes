@@ -6,5 +6,10 @@
         : base("CPF ja cadastrado no sistema.")
     {
     }
+
+    public ClienteCpfDuplicadoException(string message)
+        : base(message)
+    {
+    }
   }
 }

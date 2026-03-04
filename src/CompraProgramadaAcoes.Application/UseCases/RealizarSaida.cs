@@ -1,10 +1,11 @@
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Application.Exceptions;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces.UseCases;
 
 namespace CompraProgramadaAcoes.Application.UseCases;
 
-public class RealizarSaida(IClienteRepository clienteRepository)
+public class RealizarSaida(IClienteRepository clienteRepository) : IRealizarSaida
 {
   private readonly IClienteRepository _clienteRepository = clienteRepository;
 

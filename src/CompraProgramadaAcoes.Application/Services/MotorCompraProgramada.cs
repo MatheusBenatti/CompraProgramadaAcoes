@@ -101,7 +101,15 @@ public class MotorCompraProgramada(
 
         // Verificar se é dia 5, 15 ou 25
         var dia = data.Day;
-        return Task.FromResult(dia == 5 || dia == 15 || dia == 25);
+        var ehDiaDeExecucao = dia == 5 || dia == 15 || dia == 25;
+        
+        if (!ehDiaDeExecucao)
+            return Task.FromResult(false);
+
+        // TODO: Implementar validação de feriados brasileiros
+        // Por enquanto, considera apenas fins de semana
+        
+        return Task.FromResult(true);
     }
 
     private Dictionary<string, (int Quantidade, decimal Valor)> CalcularComprasConsolidadas(
@@ -111,7 +119,12 @@ public class MotorCompraProgramada(
 
         foreach (var item in cesta.Itens)
         {
-            var cotacao = cotacoes[item.Ticker];
+            if (!cotacoes.TryGetValue(item.Ticker, out var cotacao))
+            {
+                _logger.LogError($"Cotação não encontrada para o ticker {item.Ticker}");
+                continue;
+            }
+            
             var valorPorAtivo = valorTotal * (item.Percentual / 100);
             var quantidade = (int)Math.Floor(valorPorAtivo / cotacao.PrecoFechamento);
             var valorReal = quantidade * cotacao.PrecoFechamento;
@@ -192,18 +205,33 @@ public class MotorCompraProgramada(
     private async Task DistribuirAtivosParaClientes(
         List<OrdemCompra> ordens, List<Cliente> clientes, CestaRecomendacao cesta)
     {
+        // Calcular total de aportes do dia (1/3 de cada cliente)
+        var totalAportes = clientes.Sum(c => c.ValorMensal / 3);
+        
+        _logger.LogInformation($"Iniciando distribuição de {ordens.Count} ordens para {clientes.Count} clientes. Total de aportes: R$ {totalAportes:N2}");
+
         foreach (var cliente in clientes)
         {
             var valorAporteCliente = cliente.ValorMensal / 3;
             var contaGrafica = cliente.ContaGrafica;
+            
+            // Calcular percentual correto do cliente sobre o total
+            var percentualCliente = valorAporteCliente / totalAportes;
 
             foreach (var ordem in ordens)
             {
-                // Calcular quantidade proporcional para o cliente
-                var percentualCliente = (decimal)(valorAporteCliente / clientes.Sum(c => c.ValorMensal * 3));
-                var quantidadeCliente = (int)Math.Floor(ordem.Quantidade * percentualCliente);
+                // Obter percentual do ativo na cesta
+                var itemCesta = cesta.Itens.FirstOrDefault(i => i.Ticker == ordem.Ticker);
+                if (itemCesta == null) continue;
+
+                // Calcular quantidade baseada no valor do aporte do cliente para este ativo
+                var valorAporteAtivo = valorAporteCliente * (itemCesta.Percentual / 100);
+                var quantidadeCliente = (int)Math.Floor(valorAporteAtivo / ordem.PrecoUnitario);
 
                 if (quantidadeCliente <= 0) continue;
+
+                // Log da distribuição
+                _logger.LogInformation($"Distribuindo {quantidadeCliente} ações de {ordem.Ticker} para cliente {cliente.Nome} (ID: {cliente.Id})");
 
                 // Criar distribuição
                 var distribuicao = new Distribuicao(ordem.Id, contaGrafica.Id, ordem.Ticker, quantidadeCliente, ordem.PrecoUnitario);
@@ -247,6 +275,28 @@ public class MotorCompraProgramada(
                 };
 
                 await _messagePublisher.PublishAsync("ir-events", System.Text.Json.JsonSerializer.Serialize(irEvent));
+            }
+        }
+        
+        // Calcular e logar resíduos da distribuição
+        foreach (var ordem in ordens)
+        {
+            var totalDistribuido = 0;
+            foreach (var cliente in clientes)
+            {
+                var itemCesta = cesta.Itens.FirstOrDefault(i => i.Ticker == ordem.Ticker);
+                if (itemCesta == null) continue;
+                
+                var valorAporteCliente = cliente.ValorMensal / 3;
+                var valorAporteAtivo = valorAporteCliente * (itemCesta.Percentual / 100);
+                var quantidadeCliente = (int)Math.Floor(valorAporteAtivo / ordem.PrecoUnitario);
+                totalDistribuido += quantidadeCliente;
+            }
+            
+            var residuo = ordem.Quantidade - totalDistribuido;
+            if (residuo > 0)
+            {
+                _logger.LogInformation($"Resíduo de {residuo} ações de {ordem.Ticker} mantido na conta master");
             }
         }
     }
