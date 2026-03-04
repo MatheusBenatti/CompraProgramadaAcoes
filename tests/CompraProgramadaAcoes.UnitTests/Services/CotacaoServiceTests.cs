@@ -10,13 +10,19 @@ namespace CompraProgramadaAcoes.UnitTests.Services;
 
 public class CotacaoServiceTests
 {
+    private readonly Mock<ICacheService> _cacheServiceMock;
+    private readonly Mock<CestaCacheService> _cestaCacheServiceMock;
+    private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
     private readonly CotacaoService _cotacaoService;
     private readonly string _pastaCotacoes = "test_cotacoes";
 
     public CotacaoServiceTests()
     {
-        _cotahistParserMock = new Mock<CotahistParser>();
+        _cacheServiceMock = new Mock<ICacheService>();
+        _cestaCacheServiceMock = new Mock<CestaCacheService>(_cacheServiceMock.Object);
+        _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object);
         _cotacaoService = new CotacaoService(_cotahistParserMock.Object, _pastaCotacoes);
     }
 

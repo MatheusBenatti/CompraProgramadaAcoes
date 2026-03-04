@@ -13,6 +13,9 @@ public class AdminControllerTests
     private readonly Mock<ICestaRecomendacaoRepository> _cestaRepositoryMock;
     private readonly Mock<IContaGraficaRepository> _contaGraficaRepositoryMock;
     private readonly Mock<ICustodiaRepository> _custodiaRepositoryMock;
+    private readonly Mock<ICacheService> _cacheServiceMock;
+    private readonly Mock<CestaCacheService> _cestaCacheServiceMock;
+    private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
     private readonly AdminController _controller;
 
@@ -21,7 +24,10 @@ public class AdminControllerTests
         _cestaRepositoryMock = new Mock<ICestaRecomendacaoRepository>();
         _contaGraficaRepositoryMock = new Mock<IContaGraficaRepository>();
         _custodiaRepositoryMock = new Mock<ICustodiaRepository>();
-        _cotahistParserMock = new Mock<CotahistParser>();
+        _cacheServiceMock = new Mock<ICacheService>();
+        _cestaCacheServiceMock = new Mock<CestaCacheService>(_cacheServiceMock.Object);
+        _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object);
         _controller = new AdminController(
             _cestaRepositoryMock.Object,
             _contaGraficaRepositoryMock.Object,
