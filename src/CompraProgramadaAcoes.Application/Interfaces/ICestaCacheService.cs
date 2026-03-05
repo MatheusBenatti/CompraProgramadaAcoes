@@ -7,7 +7,7 @@ public interface ICestaCacheService
 {
     Task<CestaCacheDTO?> ObterCestaAsync();
     Task SalvarCestaAsync(CestaCacheDTO cesta);
-    Task<CestaCacheDTO> GerarCestaDoDiaAsync(IEnumerable<CotacaoB3> cotacoes);
-    Task<bool> AtualizarCestaSeNecessarioAsync(IEnumerable<CotacaoB3> cotacoes);
+    Task<CestaCacheDTO> GerarCestaDoDiaAsync(IEnumerable<Cotacao> cotacoes);
+    Task<bool> AtualizarCestaSeNecessarioAsync(IEnumerable<Cotacao> cotacoes);
     Task InicializarCestaPadraoAsync();
 }

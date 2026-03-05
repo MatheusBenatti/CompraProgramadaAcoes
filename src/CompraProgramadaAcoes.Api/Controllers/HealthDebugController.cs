@@ -17,7 +17,7 @@ namespace CompraProgramadaAcoes.Api.Controllers
     [HttpGet("kafka")]
     public async Task<IActionResult> TestKafka([FromServices] IMessagePublisher publisher)
     {
-      await publisher.PublishAsync("test-topic", "Mensagem teste");
+      await publisher.PublishAsync("compra-programada-acoes-topic", "Mensagem teste");
       return Ok("Mensagem enviada");
     }
 

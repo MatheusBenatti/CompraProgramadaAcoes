@@ -10,7 +10,7 @@ public class TopFiveAnalyzer
     /// </summary>
     /// <param name="cotacoes">Lista de cotações do dia</param>
     /// <returns>Cesta com Top 5 ações e percentuais baseados no volume</returns>
-    public CestaCacheDTO GerarCestaTopFive(IEnumerable<CotacaoB3> cotacoes)
+    public CestaCacheDTO GerarCestaTopFive(IEnumerable<Cotacao> cotacoes)
     {
         // Filtrar apenas mercado a vista (010) e ordenar por volume financeiro
         var topCinco = cotacoes
@@ -55,7 +55,7 @@ public class TopFiveAnalyzer
     /// <summary>
     /// Obtém estatísticas do Top 5 para análise
     /// </summary>
-    public Dictionary<string, decimal> ObterEstatisticasTopFive(IEnumerable<CotacaoB3> cotacoes)
+    public Dictionary<string, decimal> ObterEstatisticasTopFive(IEnumerable<Cotacao> cotacoes)
     {
         var topCinco = cotacoes
             .Where(c => c.TipoMercado == 10)
@@ -73,7 +73,7 @@ public class TopFiveAnalyzer
     /// <summary>
     /// Valida se a cesta atual ainda é relevante baseada no volume do dia
     /// </summary>
-    public bool CestaAindaRelevante(CestaCacheDTO cestaAtual, IEnumerable<CotacaoB3> cotacoesNovas)
+    public bool CestaAindaRelevante(CestaCacheDTO cestaAtual, IEnumerable<Cotacao> cotacoesNovas)
     {
         var topCincoNovo = cotacoesNovas
             .Where(c => c.TipoMercado == 10)

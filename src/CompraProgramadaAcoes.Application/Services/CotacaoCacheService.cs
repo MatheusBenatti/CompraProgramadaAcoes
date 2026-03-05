@@ -30,10 +30,10 @@ public class CotacaoCacheService
         return cotacoes?.ObterCotacao(ticker);
     }
 
-    public async Task SalvarCotacoesDaCestaAsync(IEnumerable<CotacaoB3> cotacoesB3, IEnumerable<string> tickersCesta)
+    public async Task SalvarCotacoesDaCestaAsync(IEnumerable<Cotacao> cotacoes, IEnumerable<string> tickersCesta)
     {
         var tickersSet = tickersCesta.Select(t => t.ToUpper()).ToHashSet();
-        var cotacoesFiltradas = cotacoesB3
+        var cotacoesFiltradas = cotacoes
             .Where(c => tickersSet.Contains(c.Ticker.ToUpper()))
             .ToList();
 

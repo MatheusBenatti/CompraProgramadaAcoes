@@ -23,7 +23,7 @@ public class AdminControllerTests
     private readonly Mock<CotahistParser> _cotahistParserMock;
     private readonly Mock<IWebHostEnvironment> _envMock;
     private readonly Mock<IConfiguration> _configurationMock;
-    private readonly Mock<ICotacaoB3Repository> _cotacaoB3RepositoryMock;
+    private readonly Mock<ICotacaoRepository> _cotacaoRepositoryMock;
     private readonly AdminController _controller;
 
     public AdminControllerTests()
@@ -34,8 +34,8 @@ public class AdminControllerTests
         _cacheServiceMock = new Mock<ICacheService>();
         _cestaCacheServiceMock = new Mock<ICestaCacheService>();
         _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
-        _cotacaoB3RepositoryMock = new Mock<ICotacaoB3Repository>();
-        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoB3RepositoryMock.Object);
+        _cotacaoRepositoryMock = new Mock<ICotacaoRepository>();
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoRepositoryMock.Object);
         _envMock = new Mock<IWebHostEnvironment>();
         _configurationMock = new Mock<IConfiguration>();
         
@@ -240,13 +240,13 @@ public class AdminControllerTests
         cesta.AdicionarItem("BBDC4", 20);
         cesta.AdicionarItem("WEGE3", 20);
 
-        var cotacoes = new Dictionary<string, CotacaoB3>
+        var cotacoes = new Dictionary<string, Cotacao>
         {
-            ["PETR4"] = new CotacaoB3 { Ticker = "PETR4", PrecoFechamento = 35.50m },
-            ["VALE3"] = new CotacaoB3 { Ticker = "VALE3", PrecoFechamento = 68.75m },
-            ["ITUB4"] = new CotacaoB3 { Ticker = "ITUB4", PrecoFechamento = 31.25m },
-            ["BBDC4"] = new CotacaoB3 { Ticker = "BBDC4", PrecoFechamento = 18.45m },
-            ["WEGE3"] = new CotacaoB3 { Ticker = "WEGE3", PrecoFechamento = 52.30m }
+            ["PETR4"] = new Cotacao { Ticker = "PETR4", PrecoFechamento = 35.50m },
+            ["VALE3"] = new Cotacao { Ticker = "VALE3", PrecoFechamento = 68.75m },
+            ["ITUB4"] = new Cotacao { Ticker = "ITUB4", PrecoFechamento = 31.25m },
+            ["BBDC4"] = new Cotacao { Ticker = "BBDC4", PrecoFechamento = 18.45m },
+            ["WEGE3"] = new Cotacao { Ticker = "WEGE3", PrecoFechamento = 52.30m }
         };
 
         _cestaRepositoryMock
@@ -338,10 +338,10 @@ public class AdminControllerTests
         custodia[0].AtualizarCustodia(100, 30.00m, "PETR4");
         custodia[1].AtualizarCustodia(50, 65.00m, "VALE3");
 
-        var cotacoes = new Dictionary<string, CotacaoB3>
+        var cotacoes = new Dictionary<string, Cotacao>
         {
-            ["PETR4"] = new CotacaoB3 { Ticker = "PETR4", PrecoFechamento = 35.50m },
-            ["VALE3"] = new CotacaoB3 { Ticker = "VALE3", PrecoFechamento = 68.75m }
+            ["PETR4"] = new Cotacao { Ticker = "PETR4", PrecoFechamento = 35.50m },
+            ["VALE3"] = new Cotacao { Ticker = "VALE3", PrecoFechamento = 68.75m }
         };
 
         _contaGraficaRepositoryMock

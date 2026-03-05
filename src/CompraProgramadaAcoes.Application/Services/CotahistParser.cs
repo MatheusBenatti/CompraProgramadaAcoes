@@ -11,25 +11,26 @@ public class CotahistParser
 {
     private readonly ICestaCacheService _cestaCacheService;
     private readonly CotacaoCacheService _cotacaoCacheService;
-    private readonly ICotacaoB3Repository _cotacaoB3Repository;
+    private readonly ICotacaoRepository _cotacaoRepository;
 
-    public CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService, ICotacaoB3Repository cotacaoB3Repository)
+    public CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService, ICotacaoRepository cotacaoRepository)
     {
         _cestaCacheService = cestaCacheService;
         _cotacaoCacheService = cotacaoCacheService;
-        _cotacaoB3Repository = cotacaoB3Repository;
+        _cotacaoRepository = cotacaoRepository;
     }
 
     /// <summary>
     /// Lê e faz parse de um arquivo COTAHIST da B3.
-    /// Retorna apenas registros de detalhe (TIPREG = 01)
-    /// filtrados por mercado a vista (010) e fracionário (020).
-    /// Durante o parse, gera cesta Top Five baseada no volume do dia
-    /// e salva as cotações dos tickers da cesta para consultas rápidas.
+    /// Processa todos os registros de detalhe (TIPREG = 01).
+    /// Aplica pré-processamento: filtra por mercado a vista (010) e fracionário (020),
+    /// ordena por volume negociado e limita aos 100 mais relevantes.
+    /// Salva apenas dados essenciais no banco, mas mantém dados completos
+    /// para análises (Top Five, cache, etc.).
     /// </summary>
-    public virtual async Task<IEnumerable<CotacaoB3>> ParseArquivoAsync(string caminhoArquivo)
+    public virtual async Task<IEnumerable<Cotacao>> ParseArquivoAsync(string caminhoArquivo)
     {
-        var cotacoes = new List<CotacaoB3>();
+        var cotacoesCompletas = new List<Cotacao>();
         
         // Registrar encoding ISO-8859-1 para ler o arquivo corretamente
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -53,7 +54,7 @@ public class CotahistParser
             if (tipoMercado != 10 && tipoMercado != 20)
                 continue;
 
-            var cotacao = new CotacaoB3
+            var cotacaoCompleta = new Cotacao
             {
                 DataPregao = DateTime.ParseExact(
                     linha.Substring(2, 8), "yyyyMMdd", 
@@ -71,33 +72,52 @@ public class CotahistParser
                 VolumeNegociado = ParsePreco(linha.Substring(170, 18))
             };
 
-            cotacoes.Add(cotacao);
+            cotacoesCompletas.Add(cotacaoCompleta);
         }
 
-        // Gerar cesta Top Five baseada no volume do dia (sempre atualiza)
-        var cestaFoiAtualizada = await _cestaCacheService.GerarCestaDoDiaAsync(cotacoes);
-        
-        // Salvar todas as cotações no banco de dados para validação
-        if (cotacoes.Any())
+        // Pré-processamento: filtrar por volume e mercado antes de salvar
+        var cotacoesFiltradas = cotacoesCompletas
+            .Where(c => c.TipoMercado == 10) // Apenas mercado a vista
+            .Where(c => c.VolumeNegociado > 0) // Com volume negociado
+            .OrderByDescending(c => c.VolumeNegociado) // Maior volume primeiro
+            .Take(100) // Limitar aos 100 mais negociados para otimizar
+            .ToList();
+
+        // Converter para entidades simplificadas para salvar no banco
+        var cotacoesParaSalvar = cotacoesFiltradas.Select(c => new Cotacao
         {
-            await _cotacaoB3Repository.BulkInsertAsync(cotacoes);
+            DataPregao = c.DataPregao,
+            Ticker = c.Ticker,
+            PrecoAbertura = c.PrecoAbertura,
+            PrecoFechamento = c.PrecoFechamento,
+            PrecoMaximo = c.PrecoMaximo,
+            PrecoMinimo = c.PrecoMinimo
+        }).ToList();
+
+        // Gerar cesta Top Five baseada no volume do dia (usando dados completos)
+        var cestaFoiAtualizada = await _cestaCacheService.GerarCestaDoDiaAsync(cotacoesCompletas);
+        
+        // Salvar apenas dados essenciais no banco de dados
+        if (cotacoesParaSalvar.Any())
+        {
+            await _cotacaoRepository.BulkInsertAsync(cotacoesParaSalvar);
         }
         
-        // Salvar cotações dos tickers da cesta no Redis para consultas rápidas
+        // Salvar cotações dos tickers da cesta no Redis para consultas rápidas (usando dados completos)
         var cesta = await _cestaCacheService.ObterCestaAsync();
         if (cesta?.Itens != null)
         {
             var tickersCesta = cesta.Itens.Select(i => i.Ticker);
-            await _cotacaoCacheService.SalvarCotacoesDaCestaAsync(cotacoes, tickersCesta);
+            await _cotacaoCacheService.SalvarCotacoesDaCestaAsync(cotacoesCompletas, tickersCesta);
         }
 
-        return cotacoes;
+        return cotacoesCompletas; // Retorna dados completos para análises
     }
 
     /// <summary>
     /// Versão síncrona para compatibilidade
     /// </summary>
-    public virtual IEnumerable<CotacaoB3> ParseArquivo(string caminhoArquivo)
+    public virtual IEnumerable<Cotacao> ParseArquivo(string caminhoArquivo)
     {
         return ParseArquivoAsync(caminhoArquivo).GetAwaiter().GetResult();
     }
@@ -117,7 +137,7 @@ public class CotahistParser
     /// Obtém a cotação de fechamento mais recente de um ticker específico.
     /// Busca na pasta cotacoes/ o arquivo mais recente.
     /// </summary>
-    public virtual CotacaoB3? ObterCotacaoFechamento(string pastaCotacoes, string ticker)
+    public virtual Cotacao? ObterCotacaoFechamento(string pastaCotacoes, string ticker)
     {
         var arquivos = Directory.GetFiles(pastaCotacoes, "COTAHIST_D*.TXT")
             .OrderByDescending(f => f)
@@ -128,7 +148,6 @@ public class CotahistParser
             var cotacoes = ParseArquivoAsync(arquivo).GetAwaiter().GetResult();
             var cotacao = cotacoes
                 .Where(c => c.Ticker.Equals(ticker, StringComparison.OrdinalIgnoreCase))
-                .Where(c => c.TipoMercado == 10) // Mercado a vista
                 .FirstOrDefault();
 
             if (cotacao != null)
@@ -141,9 +160,9 @@ public class CotahistParser
     /// <summary>
     /// Obtém cotações de fechamento para múltiplos tickers.
     /// </summary>
-    public virtual Dictionary<string, CotacaoB3> ObterCotacoesFechamento(string pastaCotacoes, IEnumerable<string> tickers)
+    public virtual Dictionary<string, Cotacao> ObterCotacoesFechamento(string pastaCotacoes, IEnumerable<string> tickers)
     {
-        var resultado = new Dictionary<string, CotacaoB3>();
+        var resultado = new Dictionary<string, Cotacao>();
         
         foreach (var ticker in tickers)
         {

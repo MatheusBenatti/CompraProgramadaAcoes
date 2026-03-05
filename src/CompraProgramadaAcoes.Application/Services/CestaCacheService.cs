@@ -30,7 +30,7 @@ public class CestaCacheService : ICestaCacheService
     /// <summary>
     /// Gera e salva cesta Top Five baseada no volume do dia
     /// </summary>
-    public async Task<CestaCacheDTO> GerarCestaDoDiaAsync(IEnumerable<CotacaoB3> cotacoes)
+    public async Task<CestaCacheDTO> GerarCestaDoDiaAsync(IEnumerable<Cotacao> cotacoes)
     {
         var analyzer = new TopFiveAnalyzer();
         var novaCesta = analyzer.GerarCestaTopFive(cotacoes);
@@ -42,7 +42,7 @@ public class CestaCacheService : ICestaCacheService
     /// <summary>
     /// Atualiza cesta apenas se houver mudança significativa no Top 5
     /// </summary>
-    public async Task<bool> AtualizarCestaSeNecessarioAsync(IEnumerable<CotacaoB3> cotacoes)
+    public async Task<bool> AtualizarCestaSeNecessarioAsync(IEnumerable<Cotacao> cotacoes)
     {
         var cestaAtual = await ObterCestaAsync();
         var analyzer = new TopFiveAnalyzer();

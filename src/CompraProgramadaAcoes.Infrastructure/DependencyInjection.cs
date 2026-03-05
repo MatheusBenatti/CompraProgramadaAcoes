@@ -45,7 +45,7 @@ public static class DependencyInjection
     services.AddScoped<IDistribuicaoRepository, DistribuicaoRepository>();
     services.AddScoped<IContaMasterRepository, ContaMasterRepository>();
     services.AddScoped<IEventoIRRepository, EventoIRRepository>();
-    services.AddScoped<ICotacaoB3Repository, CotacaoB3Repository>();
+    services.AddScoped<ICotacaoRepository, CotacaoRepository>();
 
     // Domain Services
     services.AddScoped<ICalculadoraDistribuicao, CalculadoraDistribuicao>();
@@ -69,7 +69,11 @@ public static class DependencyInjection
     services.AddSingleton<IConnectionMultiplexer>(sp =>
     {
         var settings = sp.GetRequiredService<IOptions<RedisSettings>>().Value;
-        return ConnectionMultiplexer.Connect(settings.Connection);
+        var config = ConfigurationOptions.Parse(settings.Connection);
+        config.AbortOnConnectFail = false;
+        config.ConnectRetry = 3;
+        config.ConnectTimeout = 5000;
+        return ConnectionMultiplexer.Connect(config);
     });
 
     services.AddScoped<ICacheService, RedisCacheService>();

@@ -17,7 +17,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
   public DbSet<Rebalanceamento> Rebalanceamentos { get; set; }
   public DbSet<Venda> Vendas { get; set; }
   public DbSet<Cotacao> Cotacoes { get; set; }
-  public DbSet<CotacaoB3> CotacoesB3 { get; set; }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -237,24 +236,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.Property(e => e.PrecoMaximo).HasColumnType("decimal(18,4)").IsRequired();
       entity.Property(e => e.PrecoMinimo).HasColumnType("decimal(18,4)").IsRequired();
       entity.HasIndex(e => new { e.DataPregao, e.Ticker }).IsUnique();
-    });
-
-    // CotacaoB3
-    modelBuilder.Entity<CotacaoB3>(entity =>
-    {
-      entity.ToTable("CotacoesB3");
-      entity.HasKey(e => new { e.DataPregao, e.Ticker });
-      entity.Property(e => e.Ticker).HasMaxLength(10).IsRequired();
-      entity.Property(e => e.CodigoBDI).HasMaxLength(10).IsRequired();
-      entity.Property(e => e.TipoMercado).IsRequired();
-      entity.Property(e => e.NomeEmpresa).HasMaxLength(200).IsRequired();
-      entity.Property(e => e.PrecoAbertura).HasColumnType("decimal(18,4)").IsRequired();
-      entity.Property(e => e.PrecoMaximo).HasColumnType("decimal(18,4)").IsRequired();
-      entity.Property(e => e.PrecoMinimo).HasColumnType("decimal(18,4)").IsRequired();
-      entity.Property(e => e.PrecoFechamento).HasColumnType("decimal(18,4)").IsRequired();
-      entity.Property(e => e.PrecoMedio).HasColumnType("decimal(18,4)").IsRequired();
-      entity.Property(e => e.QuantidadeNegociada).IsRequired();
-      entity.Property(e => e.VolumeNegociado).HasColumnType("decimal(18,2)").IsRequired();
     });
   }
 }

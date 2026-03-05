@@ -15,7 +15,7 @@ public class CotacaoServiceTests
     private readonly Mock<CestaCacheService> _cestaCacheServiceMock;
     private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
-    private readonly Mock<ICotacaoB3Repository> _cotacaoB3RepositoryMock;
+    private readonly Mock<ICotacaoRepository> _cotacaoRepositoryMock;
     private readonly CotacaoService _cotacaoService;
     private readonly string _pastaCotacoes = "test_cotacoes";
 
@@ -24,8 +24,8 @@ public class CotacaoServiceTests
         _cacheServiceMock = new Mock<ICacheService>();
         _cestaCacheServiceMock = new Mock<CestaCacheService>(_cacheServiceMock.Object);
         _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
-        _cotacaoB3RepositoryMock = new Mock<ICotacaoB3Repository>();
-        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoB3RepositoryMock.Object);
+        _cotacaoRepositoryMock = new Mock<ICotacaoRepository>();
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoRepositoryMock.Object);
         _cotacaoService = new CotacaoService(_cotahistParserMock.Object, _pastaCotacoes);
     }
 
@@ -34,7 +34,7 @@ public class CotacaoServiceTests
     {
         // Arrange
         var ticker = new Ticker("PETR4");
-        var cotacaoEsperada = new CotacaoB3
+        var cotacaoEsperada = new Cotacao
         {
             Ticker = "PETR4",
             PrecoFechamento = 35.50m
@@ -60,7 +60,7 @@ public class CotacaoServiceTests
 
         _cotahistParserMock
             .Setup(x => x.ObterCotacaoFechamento(_pastaCotacoes, ticker))
-            .Returns((CotacaoB3?)null);
+            .Returns((Cotacao?)null);
 
         // Act
         var resultado = await _cotacaoService.ObterCotacaoAtualAsync(ticker);
@@ -81,10 +81,10 @@ public class CotacaoServiceTests
             new("ITUB4")
         };
 
-        var cotacoesMock = new Dictionary<Ticker, CotacaoB3?>
+        var cotacoesMock = new Dictionary<Ticker, Cotacao?>
         {
-            [tickers[0]] = new CotacaoB3 { Ticker = "PETR4", PrecoFechamento = 35.50m },
-            [tickers[1]] = new CotacaoB3 { Ticker = "VALE3", PrecoFechamento = 68.75m },
+            [tickers[0]] = new Cotacao { Ticker = "PETR4", PrecoFechamento = 35.50m },
+            [tickers[1]] = new Cotacao { Ticker = "VALE3", PrecoFechamento = 68.75m },
             [tickers[2]] = null
         };
 
