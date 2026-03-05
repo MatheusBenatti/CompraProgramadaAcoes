@@ -16,6 +16,10 @@ using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Infrastructure.Persistence;
 using CompraProgramadaAcoes.Application.Services;
+using CompraProgramadaAcoes.Application.Interfaces.Services;
+using CompraProgramadaAcoes.Application.UseCases.Admin;
+using CompraProgramadaAcoes.Application.UseCases.Motor;
+using CompraProgramadaAcoes.Application.UseCases.Rebalanceamento;
 
 namespace CompraProgramadaAcoes.Infrastructure;
 
@@ -63,6 +67,21 @@ public static class DependencyInjection
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IAlterarValorMensal, CompraProgramadaAcoes.Application.UseCases.AlterarValorMensal>();
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IConsultarCarteira, CompraProgramadaAcoes.Application.Services.ConsultarCarteira>();
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IConsultarRentabilidade, CompraProgramadaAcoes.Application.Services.ConsultarRentabilidade>();
+
+    // Admin Services and Use Cases
+    services.AddScoped<IAdminService, AdminService>();
+    services.AddScoped<CadastrarCestaUseCase>();
+    services.AddScoped<ObterCestaAtualUseCase>();
+    services.AddScoped<ObterHistoricoCestasUseCase>();
+    services.AddScoped<ObterCustodiaMasterUseCase>();
+
+    // Motor Services and Use Cases
+    services.AddScoped<IMotorService, MotorService>();
+    services.AddScoped<ExecutarCompraUseCase>();
+
+    // Rebalanceamento Services and Use Cases
+    services.AddScoped<IRebalanceamentoService, RebalanceamentoService>();
+    services.AddScoped<RebalancearPorMudancaCestaUseCase>();
 
     // REDIS
     services.Configure<RedisSettings>(

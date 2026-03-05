@@ -1,52 +1,49 @@
 using Microsoft.AspNetCore.Mvc;
-using CompraProgramadaAcoes.Application.Interfaces;
-using CompraProgramadaAcoes.Application.Interfaces.Repositories;
-using CompraProgramadaAcoes.Domain.Entities;
+using CompraProgramadaAcoes.Application.DTOs;
+using CompraProgramadaAcoes.Application.DTOs.Rebalanceamento;
+using CompraProgramadaAcoes.Application.Interfaces.Services;
+using CompraProgramadaAcoes.Application.Exceptions;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RebalanceamentoController : ControllerBase
+public class RebalanceamentoController(IRebalanceamentoService rebalanceamentoService) : ControllerBase
 {
-    private readonly IMotorRebalanceamento _motorRebalanceamento;
-    private readonly ICestaRecomendacaoRepository _cestaRepository;
+  private readonly IRebalanceamentoService _rebalanceamentoService = rebalanceamentoService;
 
-    public RebalanceamentoController(
-        IMotorRebalanceamento motorRebalanceamento,
-        ICestaRecomendacaoRepository cestaRepository)
+  /// Rebalanceia carteiras por mudança de cesta
+  [HttpPost("mudanca-cesta")]
+  public async Task<ActionResult<RebalanceamentoResponse>> RebalancearPorMudancaCesta([FromBody] RebalancearMudancaCestaRequest request)
+  {
+    try
     {
-        _motorRebalanceamento = motorRebalanceamento;
-        _cestaRepository = cestaRepository;
+      var result = await _rebalanceamentoService.RebalancearPorMudancaCestaAsync(request);
+      return Ok(result);
     }
-
-    /// <summary>
-    /// Rebalanceia carteiras por mudança de cesta
-    /// </summary>
-    [HttpPost("mudanca-cesta")]
-    public async Task<ActionResult> RebalancearPorMudancaCesta([FromBody] RebalancearMudancaCestaRequest request)
+    catch (BusinessException ex)
     {
-        try
-        {
-            var cestaAntiga = await _cestaRepository.ObterPorIdAsync(request.CestaAntigaId);
-            var cestaNova = await _cestaRepository.ObterPorIdAsync(request.CestaNovaId);
-
-            if (cestaAntiga == null || cestaNova == null)
-                return NotFound("Cesta(s) não encontrada(s)");
-
-            await _motorRebalanceamento.RebalancearPorMudancaCestaAsync(cestaAntiga, cestaNova);
-
-            return Ok("Rebalanceamento por mudança de cesta iniciado com sucesso");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Erro ao rebalancear: {ex.Message}");
-        }
+      return BadRequest(new ErrorResponse
+      {
+        Erro = ex.Message,
+        Codigo = ex.ErrorCode
+      });
     }
-}
-
-public class RebalancearMudancaCestaRequest
-{
-    public long CestaAntigaId { get; set; }
-    public long CestaNovaId { get; set; }
+    catch (NotFoundException ex)
+    {
+      return NotFound(new ErrorResponse
+      {
+        Erro = ex.Message,
+        Codigo = ex.ErrorCode
+      });
+    }
+    catch (Exception)
+    {
+      return BadRequest(new ErrorResponse
+      {
+        Erro = "Erro ao processar rebalanceamento.",
+        Codigo = "ERRO_REBALANCEAMENTO"
+      });
+    }
+  }
 }

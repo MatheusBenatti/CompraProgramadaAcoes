@@ -15,11 +15,7 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
   private readonly IConsultarCarteira _consultarCarteira = consultarCarteira;
   private readonly IConsultarRentabilidade _consultarRentabilidade = consultarRentabilidade;
 
-  /// <summary>
   /// Realiza a adesão de um novo cliente ao produto
-  /// </summary>
-  /// <param name="request">Dados de adesão do cliente</param>
-  /// <returns>Dados do cliente criado com sua conta gráfica</returns>
   [HttpPost("adesao")]
   [ProducesResponseType(typeof(AdesaoResponse), StatusCodes.Status201Created)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,11 +66,7 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
-  /// <summary>
   /// Realiza a saída de um cliente do produto
-  /// </summary>
-  /// <param name="clienteId">ID do cliente</param>
-  /// <returns>Dados da saída do cliente</returns>
   [HttpPost("{clienteId}/saida")]
   [ProducesResponseType(typeof(SaidaResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -112,12 +104,7 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
-  /// <summary>
   /// Altera o valor mensal de um cliente
-  /// </summary>
-  /// <param name="clienteId">ID do cliente</param>
-  /// <param name="request">Dados da alteração do valor mensal</param>
-  /// <returns>Dados da alteração do valor mensal</returns>
   [HttpPut("{clienteId}/valor-mensal")]
   [ProducesResponseType(typeof(AlterarValorMensalResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -165,11 +152,7 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
-  /// <summary>
   /// Consulta a carteira de ativos do cliente
-  /// </summary>
-  /// <param name="clienteId">ID do cliente</param>
-  /// <returns>Dados completos da carteira com P/L e rentabilidade</returns>
   [HttpGet("{clienteId}/carteira")]
   [ProducesResponseType(typeof(CarteiraResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -199,11 +182,7 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
-  /// <summary>
   /// Consulta o acompanhamento detalhado de rentabilidade do cliente
-  /// </summary>
-  /// <param name="clienteId">ID do cliente</param>
-  /// <returns>Dados detalhados de rentabilidade com histórico</returns>
   [HttpGet("{clienteId}/rentabilidade")]
   [ProducesResponseType(typeof(RentabilidadeResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
