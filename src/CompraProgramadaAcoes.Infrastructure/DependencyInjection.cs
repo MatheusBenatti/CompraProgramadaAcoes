@@ -45,6 +45,7 @@ public static class DependencyInjection
     services.AddScoped<IDistribuicaoRepository, DistribuicaoRepository>();
     services.AddScoped<IContaMasterRepository, ContaMasterRepository>();
     services.AddScoped<IEventoIRRepository, EventoIRRepository>();
+    services.AddScoped<ICotacaoB3Repository, CotacaoB3Repository>();
 
     // Domain Services
     services.AddScoped<ICalculadoraDistribuicao, CalculadoraDistribuicao>();

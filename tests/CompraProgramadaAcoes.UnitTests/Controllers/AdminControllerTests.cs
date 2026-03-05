@@ -6,6 +6,8 @@ using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Domain.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using Moq;
 
 namespace CompraProgramadaAcoes.UnitTests.Controllers;
@@ -19,6 +21,9 @@ public class AdminControllerTests
     private readonly Mock<ICestaCacheService> _cestaCacheServiceMock;
     private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
+    private readonly Mock<IWebHostEnvironment> _envMock;
+    private readonly Mock<IConfiguration> _configurationMock;
+    private readonly Mock<ICotacaoB3Repository> _cotacaoB3RepositoryMock;
     private readonly AdminController _controller;
 
     public AdminControllerTests()
@@ -29,13 +34,23 @@ public class AdminControllerTests
         _cacheServiceMock = new Mock<ICacheService>();
         _cestaCacheServiceMock = new Mock<ICestaCacheService>();
         _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
-        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object);
+        _cotacaoB3RepositoryMock = new Mock<ICotacaoB3Repository>();
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoB3RepositoryMock.Object);
+        _envMock = new Mock<IWebHostEnvironment>();
+        _configurationMock = new Mock<IConfiguration>();
+        
+        // Configurar o mock para retornar o caminho padrão
+        _configurationMock.Setup(c => c["FileStorage:CotacoesPath"]).Returns("cotacoes");
+        _envMock.Setup(e => e.ContentRootPath).Returns(Directory.GetCurrentDirectory());
+        
         _controller = new AdminController(
             _cestaRepositoryMock.Object,
             _contaGraficaRepositoryMock.Object,
             _custodiaRepositoryMock.Object,
             _cotahistParserMock.Object,
-            _cestaCacheServiceMock.Object);
+            _cestaCacheServiceMock.Object,
+            _envMock.Object,
+            _configurationMock.Object);
     }
 
     [Fact]

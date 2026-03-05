@@ -3,6 +3,8 @@ using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
@@ -17,7 +19,8 @@ public class MotorCompraProgramada(
       IMessagePublisher messagePublisher,
       CotahistParser cotahistParser,
       ILogger<MotorCompraProgramada> logger,
-      string pastaCotacoes = "cotacoes") : IMotorCompraProgramada
+      IConfiguration configuration,
+      IWebHostEnvironment env) : IMotorCompraProgramada
 {
     private readonly IClienteRepository _clienteRepository = clienteRepository;
     private readonly IContaMasterRepository _contaMasterRepository = contaMasterRepository;
@@ -29,7 +32,17 @@ public class MotorCompraProgramada(
     private readonly IMessagePublisher _messagePublisher = messagePublisher;
     private readonly CotahistParser _cotahistParser = cotahistParser;
     private readonly ILogger<MotorCompraProgramada> _logger = logger;
-    private readonly string _pastaCotacoes = pastaCotacoes;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly IWebHostEnvironment _env = env;
+
+    /// <summary>
+    /// Obtém o caminho completo para a pasta de cotações
+    /// </summary>
+    private string ObterCaminhoCotacoes()
+    {
+        var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
+        return Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
+    }
 
   public async Task ExecutarComprasProgramadasAsync(DateTime dataReferencia)
     {
@@ -153,7 +166,7 @@ public class MotorCompraProgramada(
             var saldoDisponivel = custodiaMaster?.Quantidade ?? 0;
 
             var quantidadeFinal = Math.Max(0, quantidadeDesejada - saldoDisponivel);
-            var preco = _cotahistParser.ObterCotacaoFechamento(_pastaCotacoes, ticker)?.PrecoFechamento ?? 0;
+            var preco = _cotahistParser.ObterCotacaoFechamento(ObterCaminhoCotacoes(), ticker)?.PrecoFechamento ?? 0;
             var valorFinal = quantidadeFinal * preco;
 
             resultado[ticker] = (quantidadeFinal, valorFinal);
@@ -173,7 +186,7 @@ public class MotorCompraProgramada(
 
             var ticker = compra.Key;
             var quantidadeTotal = compra.Value.Quantidade;
-            var preco = _cotahistParser.ObterCotacaoFechamento(_pastaCotacoes, ticker)?.PrecoFechamento ?? 0;
+            var preco = _cotahistParser.ObterCotacaoFechamento(ObterCaminhoCotacoes(), ticker)?.PrecoFechamento ?? 0;
 
             // Criar ordem de compra (priorizar lotes padrão)
             var quantidadeLotesPadrao = (quantidadeTotal / 100) * 100;

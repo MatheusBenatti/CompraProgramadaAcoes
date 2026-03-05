@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompraProgramadaAcoes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260303020711_InitialCreate")]
+    [Migration("20260305020813_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -104,14 +104,13 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("ClienteId")
+                    b.Property<long?>("ClienteId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("NumeroConta")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
@@ -236,7 +235,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Ticker")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
@@ -500,7 +498,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                         .WithOne("ContaGrafica")
                         .HasForeignKey("CompraProgramadaAcoes.Domain.Entities.ContaGrafica", "ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK_Conta_Cliente");
 
                     b.Navigation("Cliente");

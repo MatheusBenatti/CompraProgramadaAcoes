@@ -4,6 +4,8 @@ using CompraProgramadaAcoes.Application.Interfaces;
 using CompraProgramadaAcoes.Domain.Entities;
 using CompraProgramadaAcoes.Application.Services;
 using CompraProgramadaAcoes.Application.DTOs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
@@ -16,19 +18,34 @@ public class AdminController : ControllerBase
     private readonly ICustodiaRepository _custodiaRepository;
     private readonly CotahistParser _cotahistParser;
     private readonly ICestaCacheService _cestaCacheService;
+    private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _configuration;
 
     public AdminController(
         ICestaRecomendacaoRepository cestaRepository,
         IContaGraficaRepository contaGraficaRepository,
         ICustodiaRepository custodiaRepository,
         CotahistParser cotahistParser,
-        ICestaCacheService cestaCacheService)
+        ICestaCacheService cestaCacheService,
+        IWebHostEnvironment env,
+        IConfiguration configuration)
     {
         _cestaRepository = cestaRepository;
         _contaGraficaRepository = contaGraficaRepository;
         _custodiaRepository = custodiaRepository;
         _cotahistParser = cotahistParser;
         _cestaCacheService = cestaCacheService;
+        _env = env;
+        _configuration = configuration;
+    }
+
+    /// <summary>
+    /// Obtém o caminho completo para a pasta de cotações
+    /// </summary>
+    private string ObterCaminhoCotacoes()
+    {
+        var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
+        return Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
     }
 
     /// <summary>
@@ -148,8 +165,8 @@ public class AdminController : ControllerBase
             });
 
         // Obter cotações atuais
-        var tickers = cesta.Itens.Select(i => i.Ticker);
-        var cotacoes = _cotahistParser.ObterCotacoesFechamento("cotacoes", tickers);
+        var tickers = cesta.Itens.Select(i => i.Ticker).Where(t => !string.IsNullOrEmpty(t));
+        var cotacoes = _cotahistParser.ObterCotacoesFechamento(ObterCaminhoCotacoes(), tickers);
 
         var response = new CestaAtualResponse
         {
@@ -213,7 +230,7 @@ public class AdminController : ControllerBase
         
         // Obter cotações atuais
         var tickers = custodia.Where(c => c.Quantidade > 0).Select(c => c.Ticker);
-        var cotacoes = _cotahistParser.ObterCotacoesFechamento("cotacoes", tickers);
+        var cotacoes = _cotahistParser.ObterCotacoesFechamento(ObterCaminhoCotacoes(), tickers);
 
         var itensCustodia = custodia
             .Where(c => c.Quantidade > 0)

@@ -1,7 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using CompraProgramadaAcoes.Application.Interfaces;
+using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.DTOs;
+using CompraProgramadaAcoes.Domain.Entities;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
@@ -9,13 +13,34 @@ public class CestaInitializationService : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<CestaInitializationService> _logger;
+    private readonly IConfiguration _configuration;
 
     public CestaInitializationService(
         IServiceProvider serviceProvider,
-        ILogger<CestaInitializationService> logger)
+        ILogger<CestaInitializationService> logger,
+        IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _configuration = configuration;
+    }
+
+    /// <summary>
+    /// Obtém o caminho completo para a pasta de cotações
+    /// </summary>
+    private string ObterCaminhoCotacoes()
+    {
+        var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
+        
+        // Se estiver rodando no Docker, usa caminho absoluto /app/cotacoes
+        var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+        if (isDocker)
+        {
+            return "/app/cotacoes";
+        }
+        
+        // Para desenvolvimento local, usa Path.GetFullPath
+        return Path.GetFullPath(path);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -38,7 +63,7 @@ public class CestaInitializationService : IHostedService
 
             // Tentar gerar cesta a partir do arquivo COTAHIST mais recente
             var cotahistParser = scope.ServiceProvider.GetRequiredService<CotahistParser>();
-            var pastaCotacoes = "cotacoes";
+            var pastaCotacoes = ObterCaminhoCotacoes();
             
             if (!Directory.Exists(pastaCotacoes))
             {
@@ -73,6 +98,9 @@ public class CestaInitializationService : IHostedService
                 {
                     _logger.LogInformation("  {Ticker}: {Percentual}%", item.Ticker, item.Percentual);
                 }
+                
+                // Salvar a cesta também no banco de dados
+                await SalvarCestaNoBancoAsync(cestaGerada);
             }
             else
             {
@@ -102,7 +130,53 @@ public class CestaInitializationService : IHostedService
     {
         _logger.LogInformation("Gerando cesta Top Five padrão como fallback...");
         await cestaCacheService.InicializarCestaPadraoAsync();
+        
+        // Tentar salvar a cesta padrão no banco também
+        var cestaPadrao = await cestaCacheService.ObterCestaAsync();
+        if (cestaPadrao != null)
+        {
+            await SalvarCestaNoBancoAsync(cestaPadrao);
+        }
+        
         _logger.LogInformation("Cesta padrão gerada com sucesso");
+    }
+
+    private async Task SalvarCestaNoBancoAsync(CestaCacheDTO cestaCacheDTO)
+    {
+        try
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var cestaRepository = scope.ServiceProvider.GetRequiredService<ICestaRecomendacaoRepository>();
+            
+            // Verificar se já existe uma cesta ativa
+            var cestaExistente = await cestaRepository.ObterCestaVigenteAsync();
+            
+            if (cestaExistente != null)
+            {
+                // Desativar cesta existente
+                cestaExistente.Desativar();
+                await cestaRepository.SaveChangesAsync();
+            }
+            
+            // Criar nova cesta
+            var novaCesta = new CestaRecomendacao();
+            novaCesta.AtualizarNome(cestaCacheDTO.Nome ?? "Top Five");
+            
+            // Adicionar itens usando o método AdicionarItem
+            foreach (var item in cestaCacheDTO.Itens)
+            {
+                novaCesta.AdicionarItem(item.Ticker, item.Percentual);
+            }
+            
+            await cestaRepository.AddAsync(novaCesta);
+            await cestaRepository.SaveChangesAsync();
+            
+            _logger.LogInformation("Cesta salva com sucesso no banco de dados: {CestaId}", novaCesta.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao salvar cesta no banco de dados");
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

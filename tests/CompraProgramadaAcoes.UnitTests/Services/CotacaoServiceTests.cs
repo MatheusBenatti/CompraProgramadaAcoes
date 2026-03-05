@@ -3,6 +3,7 @@ using CompraProgramadaAcoes.Domain.Services;
 using CompraProgramadaAcoes.Domain.ValueObjects;
 using CompraProgramadaAcoes.Domain.Entities;
 using CompraProgramadaAcoes.Application.Services;
+using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using FluentAssertions;
 using Moq;
 
@@ -14,6 +15,7 @@ public class CotacaoServiceTests
     private readonly Mock<CestaCacheService> _cestaCacheServiceMock;
     private readonly Mock<CotacaoCacheService> _cotacaoCacheServiceMock;
     private readonly Mock<CotahistParser> _cotahistParserMock;
+    private readonly Mock<ICotacaoB3Repository> _cotacaoB3RepositoryMock;
     private readonly CotacaoService _cotacaoService;
     private readonly string _pastaCotacoes = "test_cotacoes";
 
@@ -22,7 +24,8 @@ public class CotacaoServiceTests
         _cacheServiceMock = new Mock<ICacheService>();
         _cestaCacheServiceMock = new Mock<CestaCacheService>(_cacheServiceMock.Object);
         _cotacaoCacheServiceMock = new Mock<CotacaoCacheService>(_cacheServiceMock.Object);
-        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object);
+        _cotacaoB3RepositoryMock = new Mock<ICotacaoB3Repository>();
+        _cotahistParserMock = new Mock<CotahistParser>(_cestaCacheServiceMock.Object, _cotacaoCacheServiceMock.Object, _cotacaoB3RepositoryMock.Object);
         _cotacaoService = new CotacaoService(_cotahistParserMock.Object, _pastaCotacoes);
     }
 

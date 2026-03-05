@@ -1,5 +1,6 @@
 using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Application.Interfaces;
+using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Domain.Entities;
 using System.Text;
 using System.Globalization;
@@ -10,11 +11,13 @@ public class CotahistParser
 {
     private readonly ICestaCacheService _cestaCacheService;
     private readonly CotacaoCacheService _cotacaoCacheService;
+    private readonly ICotacaoB3Repository _cotacaoB3Repository;
 
-    public CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService)
+    public CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService, ICotacaoB3Repository cotacaoB3Repository)
     {
         _cestaCacheService = cestaCacheService;
         _cotacaoCacheService = cotacaoCacheService;
+        _cotacaoB3Repository = cotacaoB3Repository;
     }
 
     /// <summary>
@@ -74,6 +77,12 @@ public class CotahistParser
         // Gerar cesta Top Five baseada no volume do dia (sempre atualiza)
         var cestaFoiAtualizada = await _cestaCacheService.GerarCestaDoDiaAsync(cotacoes);
         
+        // Salvar todas as cotações no banco de dados para validação
+        if (cotacoes.Any())
+        {
+            await _cotacaoB3Repository.BulkInsertAsync(cotacoes);
+        }
+        
         // Salvar cotações dos tickers da cesta no Redis para consultas rápidas
         var cesta = await _cestaCacheService.ObterCestaAsync();
         if (cesta?.Itens != null)
@@ -116,7 +125,7 @@ public class CotahistParser
 
         foreach (var arquivo in arquivos)
         {
-            var cotacoes = ParseArquivo(arquivo);
+            var cotacoes = ParseArquivoAsync(arquivo).GetAwaiter().GetResult();
             var cotacao = cotacoes
                 .Where(c => c.Ticker.Equals(ticker, StringComparison.OrdinalIgnoreCase))
                 .Where(c => c.TipoMercado == 10) // Mercado a vista

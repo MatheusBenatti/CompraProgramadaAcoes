@@ -44,7 +44,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.ToTable("ContasGraficas");
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
-      entity.Property(e => e.NumeroConta).HasMaxLength(20).IsRequired();
+      entity.Property(e => e.NumeroConta).HasMaxLength(20);
       entity.HasIndex(e => e.NumeroConta).IsUnique();
       entity.Property(e => e.Tipo)
           .HasConversion<string>()
@@ -55,7 +55,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
           .WithOne(e => e.ContaGrafica)
           .HasForeignKey<ContaGrafica>(e => e.ClienteId)
           .OnDelete(DeleteBehavior.Cascade)
-          .HasConstraintName("FK_Conta_Cliente");
+          .HasConstraintName("FK_Conta_Cliente")
+          .IsRequired(false);
     });
 
     // Custodia
@@ -64,7 +65,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
       entity.ToTable("Custodias");
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Id).ValueGeneratedOnAdd();
-      entity.Property(e => e.Ticker).HasMaxLength(10).IsRequired();
+      entity.Property(e => e.Ticker).HasMaxLength(10);
       entity.HasIndex(e => new { e.ContaGraficaId, e.Ticker })
       .IsUnique();
       entity.Property(e => e.Quantidade).IsRequired();

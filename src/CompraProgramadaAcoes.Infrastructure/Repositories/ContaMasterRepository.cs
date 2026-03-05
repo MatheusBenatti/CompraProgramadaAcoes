@@ -18,7 +18,7 @@ public class ContaMasterRepository(AppDbContext context) : IContaMasterRepositor
         if (conta == null)
         {
             // Criar conta master se não existir
-            conta = new ContaGrafica(0); // ID será definido pelo EF
+            conta = new ContaGrafica(null!); // ClienteId nulo para conta master
             conta.AtualizarTipo("MASTER");
             conta.AtualizarNumeroConta("MST-000001");
             
