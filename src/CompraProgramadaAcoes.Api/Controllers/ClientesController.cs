@@ -7,11 +7,13 @@ namespace CompraProgramadaAcoes.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida realizarSaida, IAlterarValorMensal alterarValorMensal) : ControllerBase
+public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida realizarSaida, IAlterarValorMensal alterarValorMensal, IConsultarCarteira consultarCarteira, IConsultarRentabilidade consultarRentabilidade) : ControllerBase
 {
   private readonly IRealizarAdesao _realizarAdesao = realizarAdesao;
   private readonly IRealizarSaida _realizarSaida = realizarSaida;
   private readonly IAlterarValorMensal _alterarValorMensal = alterarValorMensal;
+  private readonly IConsultarCarteira _consultarCarteira = consultarCarteira;
+  private readonly IConsultarRentabilidade _consultarRentabilidade = consultarRentabilidade;
 
   /// <summary>
   /// Realiza a adesão de um novo cliente ao produto
@@ -158,6 +160,74 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
       return StatusCode(500, new ErrorResponse
       {
         Erro = "Erro interno ao processar alteração de valor mensal.",
+        Codigo = "ERRO_INTERNO"
+      });
+    }
+  }
+
+  /// <summary>
+  /// Consulta a carteira de ativos do cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <returns>Dados completos da carteira com P/L e rentabilidade</returns>
+  [HttpGet("{clienteId}/carteira")]
+  [ProducesResponseType(typeof(CarteiraResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> ConsultarCarteira(int clienteId)
+  {
+    try
+    {
+      var response = await _consultarCarteira.ExecuteAsync(clienteId);
+      return Ok(response);
+    }
+    catch (ClienteNaoEncontradoException)
+    {
+      return NotFound(new ErrorResponse
+      {
+        Erro = "Cliente não encontrado.",
+        Codigo = "CLIENTE_NAO_ENCONTRADO"
+      });
+    }
+    catch (Exception)
+    {
+      return StatusCode(500, new ErrorResponse
+      {
+        Erro = "Erro interno ao consultar carteira.",
+        Codigo = "ERRO_INTERNO"
+      });
+    }
+  }
+
+  /// <summary>
+  /// Consulta o acompanhamento detalhado de rentabilidade do cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <returns>Dados detalhados de rentabilidade com histórico</returns>
+  [HttpGet("{clienteId}/rentabilidade")]
+  [ProducesResponseType(typeof(RentabilidadeResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> ConsultarRentabilidade(int clienteId)
+  {
+    try
+    {
+      var response = await _consultarRentabilidade.ExecuteAsync(clienteId);
+      return Ok(response);
+    }
+    catch (ClienteNaoEncontradoException)
+    {
+      return NotFound(new ErrorResponse
+      {
+        Erro = "Cliente não encontrado.",
+        Codigo = "CLIENTE_NAO_ENCONTRADO"
+      });
+    }
+    catch (Exception)
+    {
+      return StatusCode(500, new ErrorResponse
+      {
+        Erro = "Erro interno ao consultar rentabilidade.",
         Codigo = "ERRO_INTERNO"
       });
     }

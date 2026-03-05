@@ -13,6 +13,8 @@ public class ClientesControllerTests
     private readonly Mock<IRealizarAdesao> _realizarAdesaoMock;
     private readonly Mock<IRealizarSaida> _realizarSaidaMock;
     private readonly Mock<IAlterarValorMensal> _alterarValorMensalMock;
+    private readonly Mock<IConsultarCarteira> _consultarCarteiraMock;
+    private readonly Mock<IConsultarRentabilidade> _consultarRentabilidadeMock;
     private readonly ClientesController _controller;
 
     public ClientesControllerTests()
@@ -20,10 +22,14 @@ public class ClientesControllerTests
         _realizarAdesaoMock = new Mock<IRealizarAdesao>();
         _realizarSaidaMock = new Mock<IRealizarSaida>();
         _alterarValorMensalMock = new Mock<IAlterarValorMensal>();
+        _consultarCarteiraMock = new Mock<IConsultarCarteira>();
+        _consultarRentabilidadeMock = new Mock<IConsultarRentabilidade>();
         _controller = new ClientesController(
             _realizarAdesaoMock.Object,
             _realizarSaidaMock.Object,
-            _alterarValorMensalMock.Object);
+            _alterarValorMensalMock.Object,
+            _consultarCarteiraMock.Object,
+            _consultarRentabilidadeMock.Object);
     }
 
     [Fact]

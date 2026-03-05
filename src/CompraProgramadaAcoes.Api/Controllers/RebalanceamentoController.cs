@@ -43,35 +43,10 @@ public class RebalanceamentoController : ControllerBase
             return BadRequest($"Erro ao rebalancear: {ex.Message}");
         }
     }
-
-    /// <summary>
-    /// Rebalanceia carteiras por desvio de proporção
-    /// </summary>
-    [HttpPost("desvio-proporcao")]
-    public async Task<ActionResult> RebalancearPorDesvioProporcao([FromBody] RebalancearDesvioRequest request)
-    {
-        try
-        {
-            var limiteDesvio = request.LimiteDesvioPercentual > 0 ? request.LimiteDesvioPercentual : 0.10m;
-            
-            await _motorRebalanceamento.RebalancearPorDesvioProporcaoAsync(limiteDesvio);
-
-            return Ok($"Rebalanceamento por desvio de proporção iniciado com limite de {limiteDesvio:P1}");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Erro ao rebalancear: {ex.Message}");
-        }
-    }
 }
 
 public class RebalancearMudancaCestaRequest
 {
     public long CestaAntigaId { get; set; }
     public long CestaNovaId { get; set; }
-}
-
-public class RebalancearDesvioRequest
-{
-    public decimal LimiteDesvioPercentual { get; set; } = 0.10m; // 10% padrão
 }

@@ -61,6 +61,8 @@ public static class DependencyInjection
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IRealizarAdesao, CompraProgramadaAcoes.Application.UseCases.RealizarAdesao>();
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IRealizarSaida, CompraProgramadaAcoes.Application.UseCases.RealizarSaida>();
     services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IAlterarValorMensal, CompraProgramadaAcoes.Application.UseCases.AlterarValorMensal>();
+    services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IConsultarCarteira, CompraProgramadaAcoes.Application.Services.ConsultarCarteira>();
+    services.AddScoped<CompraProgramadaAcoes.Application.Interfaces.UseCases.IConsultarRentabilidade, CompraProgramadaAcoes.Application.Services.ConsultarRentabilidade>();
 
     // REDIS
     services.Configure<RedisSettings>(
