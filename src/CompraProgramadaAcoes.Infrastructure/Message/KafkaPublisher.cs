@@ -9,6 +9,9 @@ public class KafkaPublisher(IProducer<string, string> producer) : IMessagePublis
 
   public async Task PublishAsync(string topic, string message)
   {
+    if (string.IsNullOrWhiteSpace(topic))
+      throw new ArgumentException("Topic cannot be null or empty.", nameof(topic));
+    
     await _producer.ProduceAsync(topic, new Message<string, string>
     {
       Key = Guid.NewGuid().ToString(),
