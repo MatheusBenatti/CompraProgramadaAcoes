@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
+/// <summary>
+/// Controller para operações de clientes
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida realizarSaida, IAlterarValorMensal alterarValorMensal, IConsultarCarteira consultarCarteira, IConsultarRentabilidade consultarRentabilidade) : ControllerBase
@@ -66,7 +69,15 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
+  /// <summary>
   /// Realiza a saída de um cliente do produto
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <returns>Resultado da saída do cliente</returns>
+  /// <response code="200">Saída realizada com sucesso</response>
+  /// <response code="400">Cliente já inativo</response>
+  /// <response code="404">Cliente não encontrado</response>
+  /// <response code="500">Erro interno</response>
   [HttpPost("{clienteId}/saida")]
   [ProducesResponseType(typeof(SaidaResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -104,7 +115,16 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
+  /// <summary>
   /// Altera o valor mensal de um cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <param name="request">Dados da alteração do valor mensal</param>
+  /// <returns>Valor mensal alterado com sucesso</returns>
+  /// <response code="200">Valor alterado com sucesso</response>
+  /// <response code="400">Dados inválidos ou cliente já inativo</response>
+  /// <response code="404">Cliente não encontrado</response>
+  /// <response code="500">Erro interno</response>
   [HttpPut("{clienteId}/valor-mensal")]
   [ProducesResponseType(typeof(AlterarValorMensalResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -152,7 +172,14 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
+  /// <summary>
   /// Consulta a carteira de ativos do cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <returns>Carteira completa do cliente</returns>
+  /// <response code="200">Carteira retornada com sucesso</response>
+  /// <response code="404">Cliente não encontrado</response>
+  /// <response code="500">Erro interno</response>
   [HttpGet("{clienteId}/carteira")]
   [ProducesResponseType(typeof(CarteiraResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -182,7 +209,14 @@ public class ClientesController(IRealizarAdesao realizarAdesao, IRealizarSaida r
     }
   }
 
+  /// <summary>
   /// Consulta o acompanhamento detalhado de rentabilidade do cliente
+  /// </summary>
+  /// <param name="clienteId">ID do cliente</param>
+  /// <returns>Dados detalhados de rentabilidade</returns>
+  /// <response code="200">Rentabilidade retornada com sucesso</response>
+  /// <response code="404">Cliente não encontrado</response>
+  /// <response code="500">Erro interno</response>
   [HttpGet("{clienteId}/rentabilidade")]
   [ProducesResponseType(typeof(RentabilidadeResponse), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]

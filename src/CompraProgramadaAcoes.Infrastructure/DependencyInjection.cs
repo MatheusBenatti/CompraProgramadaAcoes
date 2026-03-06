@@ -79,6 +79,10 @@ public static class DependencyInjection
     // Motor Services and Use Cases
     services.AddScoped<IMotorService, MotorService>();
     services.AddScoped<ExecutarCompraUseCase>();
+    
+    // Motor Interfaces
+    services.AddScoped<IMotorCompraProgramada, MotorCompraProgramada>();
+    services.AddScoped<IMotorRebalanceamento, MotorRebalanceamento>();
 
     // Rebalanceamento Services and Use Cases
     services.AddScoped<IRebalanceamentoService, RebalanceamentoService>();
@@ -100,6 +104,7 @@ public static class DependencyInjection
 
     services.AddScoped<ICacheService, RedisCacheService>();
     services.AddScoped<ICestaCacheService, CestaCacheService>();
+    services.AddScoped<ICotacaoCacheService, CotacaoCacheService>();
     services.AddScoped<CotacaoCacheService>();
     services.AddScoped<CotahistParser>();
     services.AddScoped<TopFiveAnalyzer>();

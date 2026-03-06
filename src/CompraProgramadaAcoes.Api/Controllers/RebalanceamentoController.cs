@@ -6,14 +6,27 @@ using CompraProgramadaAcoes.Application.Exceptions;
 
 namespace CompraProgramadaAcoes.Api.Controllers;
 
+/// <summary>
+/// Controller para operações de rebalanceamento de carteiras
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class RebalanceamentoController(IRebalanceamentoService rebalanceamentoService) : ControllerBase
 {
   private readonly IRebalanceamentoService _rebalanceamentoService = rebalanceamentoService;
 
+  /// <summary>
   /// Rebalanceia carteiras por mudança de cesta
+  /// </summary>
+  /// <param name="request">Dados do rebalanceamento por mudança de cesta</param>
+  /// <returns>Resultado do rebalanceamento</returns>
+  /// <response code="200">Rebalanceamento executado com sucesso</response>
+  /// <response code="400">Erro de negócio</response>
+  /// <response code="404">Recurso não encontrado</response>
   [HttpPost("mudanca-cesta")]
+  [ProducesResponseType(typeof(RebalanceamentoResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<ActionResult<RebalanceamentoResponse>> RebalancearPorMudancaCesta([FromBody] RebalancearMudancaCestaRequest request)
   {
     try
