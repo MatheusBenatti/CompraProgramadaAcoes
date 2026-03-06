@@ -1,26 +1,17 @@
 namespace CompraProgramadaAcoes.Domain.Entities;
 
-public class OrdemCompra
+public class OrdemCompra(long contaMasterId, string ticker, int quantidade, decimal precoUnitario, TipoMercado tipoMercado)
 {
   public long Id { get; private set; }
-  public long ContaMasterId { get; private set; }
-  public string Ticker { get; private set; } = string.Empty;
-  public int Quantidade { get; private set; }
-  public decimal PrecoUnitario { get; private set; } = 0;
-  public TipoMercado TipoMercado { get; private set; }
+  public long ContaMasterId { get; private set; } = contaMasterId;
+  public string Ticker { get; private set; } = ticker;
+  public int Quantidade { get; private set; } = quantidade;
+  public decimal PrecoUnitario { get; private set; } = precoUnitario;
+  public TipoMercado TipoMercado { get; private set; } = tipoMercado;
   public DateTime DataExecucao { get; private set; } = DateTime.UtcNow;
   public ICollection<Distribuicao> Distribuicoes { get; private set; } = [];
 
   public ContaGrafica ContaMaster { get; private set; } = null!;
-
-  public OrdemCompra(long contaMasterId, string ticker, int quantidade, decimal precoUnitario, TipoMercado tipoMercado)
-  {
-    ContaMasterId = contaMasterId;
-    Ticker = ticker;
-    Quantidade = quantidade;
-    PrecoUnitario = precoUnitario;
-    TipoMercado = tipoMercado;
-  }
 
   public void AtualizarPrecoUnitario(decimal precoUnitario)
   {
@@ -36,8 +27,6 @@ public class OrdemCompra
   {
     DataExecucao = dataExecucao;
   }
-
-  private OrdemCompra() { } // Para EF Core
 }
 
 public enum TipoMercado

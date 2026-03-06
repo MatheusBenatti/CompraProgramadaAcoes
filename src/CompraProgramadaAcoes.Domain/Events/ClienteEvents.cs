@@ -11,9 +11,9 @@ public record ClienteCriadoEvent(
     DateTime DataAdesao
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(ClienteCriadoEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(ClienteCriadoEvent);
 }
 
 public record ClienteDesativadoEvent(
@@ -22,9 +22,9 @@ public record ClienteDesativadoEvent(
     DateTime DataDesativacao
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(ClienteDesativadoEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(ClienteDesativadoEvent);
 }
 
 public record ValorMensalAlteradoEvent(
@@ -34,7 +34,7 @@ public record ValorMensalAlteradoEvent(
     DateTime DataAlteracao
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(ValorMensalAlteradoEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(ValorMensalAlteradoEvent);
 }

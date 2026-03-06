@@ -5,8 +5,8 @@ namespace CompraProgramadaAcoes.Domain.Factories;
 
 public class CustodiaFactory : ICustodiaFactory
 {
-    public Custodia Criar(long contaGraficaId)
-    {
-        return new Custodia(contaGraficaId);
-    }
+  public Custodia Criar(long contaGraficaId)
+  {
+    return new Custodia(contaGraficaId);
+  }
 }

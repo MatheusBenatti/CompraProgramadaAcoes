@@ -5,18 +5,18 @@ namespace CompraProgramadaAcoes.Domain.Services;
 
 public interface ICalculadoraDistribuicao
 {
-    DistribuicaoResult CalcularDistribuicao(
-        ValorMonetario valorTotal,
-        List<ClienteAggregate> clientes,
-        CestaRecomendacao cesta,
-        Dictionary<Ticker, decimal> cotacoes
-    );
-    
-    CompraConsolidadaResult CalcularCompraConsolidada(
-        Dictionary<Guid, ValorMonetario> aportesClientes,
-        CestaRecomendacao cesta,
-        Dictionary<Ticker, decimal> cotacoes
-    );
+  DistribuicaoResult CalcularDistribuicao(
+      ValorMonetario valorTotal,
+      List<ClienteAggregate> clientes,
+      CestaRecomendacao cesta,
+      Dictionary<Ticker, decimal> cotacoes
+  );
+
+  CompraConsolidadaResult CalcularCompraConsolidada(
+      Dictionary<Guid, ValorMonetario> aportesClientes,
+      CestaRecomendacao cesta,
+      Dictionary<Ticker, decimal> cotacoes
+  );
 }
 
 public record DistribuicaoResult(

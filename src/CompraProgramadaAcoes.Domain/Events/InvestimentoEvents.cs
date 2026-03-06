@@ -9,9 +9,9 @@ public record InvestimentoRealizadoEvent(
     DateTime DataInvestimento
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(InvestimentoRealizadoEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(InvestimentoRealizadoEvent);
 }
 
 public record CompraConsolidadaEvent(
@@ -21,9 +21,9 @@ public record CompraConsolidadaEvent(
     DateTime DataCompra
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(CompraConsolidadaEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(CompraConsolidadaEvent);
 }
 
 public record AtivosDistribuidosEvent(
@@ -33,7 +33,7 @@ public record AtivosDistribuidosEvent(
     DateTime DataDistribuicao
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(AtivosDistribuidosEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(AtivosDistribuidosEvent);
 }

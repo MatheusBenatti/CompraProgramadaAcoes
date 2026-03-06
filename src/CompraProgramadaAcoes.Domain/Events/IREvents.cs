@@ -12,9 +12,9 @@ public record IrDeduDuroEvent(
     DateTime DataOperacao
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(IrDeduDuroEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(IrDeduDuroEvent);
 }
 
 public record IrVendaEvent(
@@ -28,9 +28,9 @@ public record IrVendaEvent(
     DateTime DataVenda
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(IrVendaEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(IrVendaEvent);
 }
 
 public record RebalanceamentoEvent(
@@ -42,7 +42,7 @@ public record RebalanceamentoEvent(
     DateTime DataRebalanceamento
 ) : IDomainEvent
 {
-    public Guid EventId { get; } = Guid.NewGuid();
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-    public string EventType { get; } = nameof(RebalanceamentoEvent);
+  public Guid EventId { get; } = Guid.NewGuid();
+  public DateTime OccurredOn { get; } = DateTime.UtcNow;
+  public string EventType { get; } = nameof(RebalanceamentoEvent);
 }
