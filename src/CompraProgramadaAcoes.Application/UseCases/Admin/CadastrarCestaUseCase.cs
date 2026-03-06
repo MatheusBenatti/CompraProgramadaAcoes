@@ -64,11 +64,11 @@ public class CadastrarCestaUseCase(
       Nome = novaCesta.Nome,
       DataCriacao = novaCesta.DataCriacao,
       Ativa = novaCesta.Ativa,
-      Itens = novaCesta.Itens.Select(i => new ItemCestaCacheDTO
+      Itens = [.. novaCesta.Itens.Select(i => new ItemCestaCacheDTO
       {
         Ticker = i.Ticker,
         Percentual = i.Percentual
-      }).ToList()
+      })]
     };
     await _cestaCacheService.SalvarCestaAsync(cestaDTO);
 

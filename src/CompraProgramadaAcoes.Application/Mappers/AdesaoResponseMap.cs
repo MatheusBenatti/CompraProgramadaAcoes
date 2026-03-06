@@ -5,7 +5,6 @@ namespace CompraProgramadaAcoes.Application.Mappers
 {
   public class AdesaoResponseMap
   {
-    private const string Format = "yyyy-MM-ddTHH:mm:ssZ";
     public static AdesaoResponse MapearParaResponse(Cliente cliente, ContaGrafica contaGrafica) => new()
     {
       ClienteId = cliente.Id,

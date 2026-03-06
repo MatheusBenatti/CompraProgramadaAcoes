@@ -1,5 +1,3 @@
-using CompraProgramadaAcoes.Domain.Entities;
-
 namespace CompraProgramadaAcoes.Application.Interfaces;
 
 public interface IMotorCompraProgramada

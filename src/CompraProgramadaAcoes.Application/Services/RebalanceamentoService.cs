@@ -4,17 +4,12 @@ using CompraProgramadaAcoes.Application.UseCases.Rebalanceamento;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
-public class RebalanceamentoService : IRebalanceamentoService
+public class RebalanceamentoService(RebalancearPorMudancaCestaUseCase rebalancearPorMudancaCestaUseCase) : IRebalanceamentoService
 {
-    private readonly RebalancearPorMudancaCestaUseCase _rebalancearPorMudancaCestaUseCase;
+  private readonly RebalancearPorMudancaCestaUseCase _rebalancearPorMudancaCestaUseCase = rebalancearPorMudancaCestaUseCase;
 
-    public RebalanceamentoService(RebalancearPorMudancaCestaUseCase rebalancearPorMudancaCestaUseCase)
-    {
-        _rebalancearPorMudancaCestaUseCase = rebalancearPorMudancaCestaUseCase;
-    }
-
-    public async Task<RebalanceamentoResponse> RebalancearPorMudancaCestaAsync(RebalancearMudancaCestaRequest request)
-    {
-        return await _rebalancearPorMudancaCestaUseCase.ExecuteAsync(request);
-    }
+  public async Task<RebalanceamentoResponse> RebalancearPorMudancaCestaAsync(RebalancearMudancaCestaRequest request)
+  {
+    return await _rebalancearPorMudancaCestaUseCase.ExecuteAsync(request);
+  }
 }

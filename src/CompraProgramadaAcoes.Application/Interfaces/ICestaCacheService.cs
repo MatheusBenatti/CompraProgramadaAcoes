@@ -9,5 +9,4 @@ public interface ICestaCacheService
     Task SalvarCestaAsync(CestaCacheDTO cesta);
     Task<CestaCacheDTO> GerarCestaDoDiaAsync(IEnumerable<Cotacao> cotacoes);
     Task<bool> AtualizarCestaSeNecessarioAsync(IEnumerable<Cotacao> cotacoes);
-    Task InicializarCestaPadraoAsync();
 }

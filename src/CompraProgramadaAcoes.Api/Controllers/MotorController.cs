@@ -12,9 +12,7 @@ public class MotorController(IMotorService motorService) : ControllerBase
 {
   private readonly IMotorService _motorService = motorService;
 
-  /// <summary>
   /// Executar compra manualmente (para testes)
-  /// </summary>
   [HttpPost("executar-compra")]
   public async Task<ActionResult<ExecucaoCompraResponse>> ExecutarCompra([FromBody] ExecutarCompraRequest request)
   {

@@ -43,41 +43,36 @@ public class ExecutarCompraUseCase(
       DataExecucao = DateTime.UtcNow,
       TotalClientes = clientes.Count,
       TotalConsolidado = distribuicoes.Sum(d => d.Quantidade * d.PrecoUnitario),
-      OrdensCompra = ordensCompra.Select(o => new OrdemCompraResponse
+      OrdensCompra = [.. ordensCompra.Select(o => new OrdemCompraResponse
       {
         Ticker = o.Ticker,
         QuantidadeTotal = o.Quantidade,
-        Detalhes = new List<OrdemCompraDetalheResponse>
-        {
-          new OrdemCompraDetalheResponse
-          {
+        Detalhes =
+        [
+          new() {
             Tipo = o.TipoMercado.ToString(),
             Ticker = o.Ticker,
             Quantidade = o.Quantidade
           }
-        },
+        ],
         PrecoUnitario = o.PrecoUnitario,
         ValorTotal = o.Quantidade * o.PrecoUnitario
-      }).ToList(),
-      Distribuicoes = distribuicoes
+      })],
+      Distribuicoes = [.. distribuicoes
         .GroupBy(d => d.CustodiaFilhote.ContaGrafica.ClienteId)
         .Select(g => new DistribuicaoResponse
         {
           ClienteId = g.Key ?? 0,
           Nome = g.FirstOrDefault()?.CustodiaFilhote?.ContaGrafica?.Cliente?.Nome ?? "Cliente não encontrado",
           ValorAporte = g.Sum(d => d.Quantidade * d.PrecoUnitario),
-          Ativos = g.GroupBy(d => d.Ticker)
+          Ativos = [.. g.GroupBy(d => d.Ticker)
             .Select(a => new AtivoDistribuidoResponse
             {
               Ticker = a.Key,
               Quantidade = a.Sum(d => d.Quantidade)
-            }).ToList()
-        }).ToList(),
-      ResiduosCustMaster = residuosMaster.Select(r => new ResiduoResponse
-      {
-        Ticker = r.Ticker,
-        Quantidade = r.Quantidade
-      }).ToList(),
+            })]
+        })],
+      ResiduosCustMaster = [.. residuosMaster.Select(r => new ResiduoResponse { Ticker = r.Ticker!, Quantidade = r.Quantidade })],
       EventosIRPublicados = eventosIR.Count,
       Mensagem = $"Compra programada executada com sucesso para {clientes.Count} clientes."
     };

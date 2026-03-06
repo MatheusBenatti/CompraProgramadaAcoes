@@ -6,6 +6,7 @@ using CompraProgramadaAcoes.Application.Services;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using FluentAssertions;
 using Moq;
+using CompraProgramadaAcoes.Application.Interfaces;
 
 namespace CompraProgramadaAcoes.UnitTests.Services;
 
