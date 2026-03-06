@@ -8,6 +8,7 @@ COPY src/CompraProgramadaAcoes.Application/*.csproj src/CompraProgramadaAcoes.Ap
 COPY src/CompraProgramadaAcoes.Infrastructure/*.csproj src/CompraProgramadaAcoes.Infrastructure/
 COPY src/CompraProgramadaAcoes.Workers/*.csproj src/CompraProgramadaAcoes.Workers/
 COPY tests/CompraProgramadaAcoes.UnitTests/*.csproj tests/CompraProgramadaAcoes.UnitTests/
+COPY tests/CompraProgramadaAcoes.IntegrationTests/*.csproj tests/CompraProgramadaAcoes.IntegrationTests/
 COPY src/CompraProgramadaAcoes.Api/*.csproj src/CompraProgramadaAcoes.Api/
 
 RUN dotnet restore

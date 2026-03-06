@@ -42,18 +42,9 @@ public class CestaInitializationService(
     {
       using var scope = _serviceProvider.CreateScope();
 
-      // Verificar se já existe cesta no Redis
-      var cestaCacheService = scope.ServiceProvider.GetRequiredService<ICestaCacheService>();
-      var cestaExistente = await cestaCacheService.ObterCestaAsync();
-
-      if (cestaExistente != null)
-      {
-        _logger.LogInformation("Cesta Top Five já existe no Redis. Pulando inicialização.");
-        return;
-      }
-
-      // Tentar gerar cesta a partir do arquivo COTAHIST mais recente
+      // Obter serviços necessários
       var cotahistParser = scope.ServiceProvider.GetRequiredService<CotahistParser>();
+      var cestaCacheService = scope.ServiceProvider.GetRequiredService<ICestaCacheService>();
       var pastaCotacoes = ObterCaminhoCotacoes();
 
       if (!Directory.Exists(pastaCotacoes))

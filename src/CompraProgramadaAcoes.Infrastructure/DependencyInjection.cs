@@ -108,6 +108,9 @@ public static class DependencyInjection
     services.AddScoped<CotacaoCacheService>();
     services.AddScoped<CotahistParser>();
     services.AddScoped<TopFiveAnalyzer>();
+    
+    // Serviços hospedados - DatabaseMigrationService deve ser registrado primeiro para rodar antes do parser
+    services.AddHostedService<DatabaseMigrationService>();
     services.AddHostedService<CestaInitializationService>();
 
     // KAFKA - CONFIGURAÇÃO
