@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <!-- Generate cobertura format and include source files -->
+          <Format>cobertura</Format>
+          <!-- Exclude test assemblies by default -->
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute</ExcludeByAttribute>
+          <Exclude>[xunit.*]*</Exclude>
+          <!-- Exclude common generated/build files and patterns from coverage -->
+          <ExcludeByFile>**/obj/*;**/bin/*;**/*.AssemblyInfo.cs;**/*.g.cs;**/*.generated.cs;**/*Designer.cs;**/Migrations/*;**/*Migration*.cs;**/*Dto*.cs;**/*DTO*.cs;**/Program.cs;**/Program.*.cs;**/DependencyInjection.cs;**/Mappers/*;**/*Mapper*.cs;**/Exceptions/*;**/*Exception*.cs;**/*DbContextFactory*.cs;**/*Bootstrap*.cs;**/*WorkerBootstrap*.cs</ExcludeByFile>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

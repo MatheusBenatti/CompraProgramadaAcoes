@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\src\CompraProgramadaAcoes.Workers\CompraProgramadaAcoes.Workers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestResults\" />
+  </ItemGroup>
+
 </Project>
