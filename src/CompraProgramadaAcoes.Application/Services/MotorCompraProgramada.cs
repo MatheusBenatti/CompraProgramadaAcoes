@@ -12,7 +12,7 @@ public class MotorCompraProgramada(
       IContaMasterRepository contaMasterRepository,
       ICustodiaRepository custodiaRepository,
       ICestaCacheService cestaCacheService,
-      CotacaoCacheService cotacaoCacheService,
+      ICotacaoCacheService cotacaoCacheService,
       IOrdemCompraRepository ordemCompraRepository,
       IDistribuicaoRepository distribuicaoRepository,
       IMessagePublisher messagePublisher,
@@ -24,7 +24,7 @@ public class MotorCompraProgramada(
   private readonly IContaMasterRepository _contaMasterRepository = contaMasterRepository;
   private readonly ICustodiaRepository _custodiaRepository = custodiaRepository;
   private readonly ICestaCacheService _cestaCacheService = cestaCacheService;
-  private readonly CotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
+  private readonly ICotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
   private readonly IOrdemCompraRepository _ordemCompraRepository = ordemCompraRepository;
   private readonly IDistribuicaoRepository _distribuicaoRepository = distribuicaoRepository;
   private readonly IMessagePublisher _messagePublisher = messagePublisher;
@@ -106,21 +106,21 @@ public class MotorCompraProgramada(
 
   public Task<bool> DeveExecutarHoje(DateTime data)
   {
-    // Verificar se é dia útil (segunda a sexta)
-    if (data.DayOfWeek == DayOfWeek.Saturday || data.DayOfWeek == DayOfWeek.Sunday)
-      return Task.FromResult(false);
-
-    // Verificar se é dia 5, 15 ou 25
+    // Verificar se é dia 5, 15 ou 25 - esses dias têm prioridade mesmo que caiam no fim de semana
     var dia = data.Day;
     var ehDiaDeExecucao = dia == 5 || dia == 15 || dia == 25;
 
-    if (!ehDiaDeExecucao)
+    if (ehDiaDeExecucao)
+      return Task.FromResult(true);
+
+    // Verificar se é dia útil (segunda a sexta)
+    if (data.DayOfWeek == DayOfWeek.Saturday || data.DayOfWeek == DayOfWeek.Sunday)
       return Task.FromResult(false);
 
     // TODO: Implementar validação de feriados brasileiros
     // Por enquanto, considera apenas fins de semana
 
-    return Task.FromResult(true);
+    return Task.FromResult(false);
   }
 
   private Dictionary<string, (int Quantidade, decimal Valor)> CalcularComprasConsolidadas(

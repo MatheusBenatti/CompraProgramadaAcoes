@@ -4,7 +4,7 @@ using CompraProgramadaAcoes.Domain.Entities;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
-public class CotacaoCacheService(ICacheService cacheService)
+public class CotacaoCacheService(ICacheService cacheService) : ICotacaoCacheService
 {
   private readonly ICacheService _cacheService = cacheService;
   private const string COTACOES_KEY = "cotacoes:cesta";

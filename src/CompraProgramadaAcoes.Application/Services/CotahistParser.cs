@@ -7,10 +7,10 @@ using System.Globalization;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
-public class CotahistParser(ICestaCacheService cestaCacheService, CotacaoCacheService cotacaoCacheService, ICotacaoRepository cotacaoRepository)
+public class CotahistParser(ICestaCacheService cestaCacheService, ICotacaoCacheService cotacaoCacheService, ICotacaoRepository cotacaoRepository)
 {
   private readonly ICestaCacheService _cestaCacheService = cestaCacheService;
-  private readonly CotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
+  private readonly ICotacaoCacheService _cotacaoCacheService = cotacaoCacheService;
   private readonly ICotacaoRepository _cotacaoRepository = cotacaoRepository;
 
   /// <summary>
