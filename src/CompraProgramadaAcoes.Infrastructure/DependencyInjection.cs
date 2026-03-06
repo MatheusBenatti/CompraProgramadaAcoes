@@ -128,7 +128,10 @@ public static class DependencyInjection
     services.AddScoped<OrdemCompraEventHandler>();
 
     // KAFKA - CONSUMER 
-    services.AddHostedService<KafkaConsumerBackgroundService>();
+    if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") == "Production")
+    {
+      services.AddHostedService<KafkaConsumerBackgroundService>();
+    }
       
     return services;
   }

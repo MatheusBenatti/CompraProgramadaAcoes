@@ -16,6 +16,8 @@ services:
       - ConnectionStrings__Default=server=mysql;port=3306;database=CompraProgramadaAcoes_db;user=root;password=123456
       - Redis__Connection=redis:6379
       - Kafka__BootstrapServers=kafka:9092
+    volumes:
+      - ./cotacoes:/app/cotacoes
 
   mysql:
     image: mysql:8
@@ -28,7 +30,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./cotacoes:/app/cotacoes
 
   redis:
     image: redis:7
