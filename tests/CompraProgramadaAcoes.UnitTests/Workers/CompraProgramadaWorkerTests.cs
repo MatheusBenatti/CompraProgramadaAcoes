@@ -1,5 +1,5 @@
 using CompraProgramadaAcoes.Application.Interfaces;
-using CompraProgramadaAcoes.Application.Workers;
+using CompraProgramadaAcoes.Workers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
