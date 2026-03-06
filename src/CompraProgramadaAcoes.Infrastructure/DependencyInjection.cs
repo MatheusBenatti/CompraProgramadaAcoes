@@ -88,12 +88,12 @@ public static class DependencyInjection
 
     services.AddSingleton<IConnectionMultiplexer>(sp =>
     {
-        var settings = sp.GetRequiredService<IOptions<RedisSettings>>().Value;
-        var config = ConfigurationOptions.Parse(settings.Connection);
-        config.AbortOnConnectFail = false;
-        config.ConnectRetry = 3;
-        config.ConnectTimeout = 5000;
-        return ConnectionMultiplexer.Connect(config);
+      var settings = sp.GetRequiredService<IOptions<RedisSettings>>().Value;
+      var config = ConfigurationOptions.Parse(settings.Connection);
+      config.AbortOnConnectFail = false;
+      config.ConnectRetry = 3;
+      config.ConnectTimeout = 5000;
+      return ConnectionMultiplexer.Connect(config);
     });
 
     services.AddScoped<ICacheService, RedisCacheService>();
@@ -110,12 +110,12 @@ public static class DependencyInjection
     // KAFKA - PRODUCER
     services.AddSingleton<IProducer<string, string>>(sp =>
     {
-        var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
-        var kafkaConfig = new ProducerConfig
-        {
-            BootstrapServers = settings.BootstrapServers
-        };
-        return new ProducerBuilder<string, string>(kafkaConfig).Build();
+      var settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
+      var kafkaConfig = new ProducerConfig
+      {
+        BootstrapServers = settings.BootstrapServers
+      };
+      return new ProducerBuilder<string, string>(kafkaConfig).Build();
     });
 
     services.AddScoped<IMessagePublisher, KafkaPublisher>();

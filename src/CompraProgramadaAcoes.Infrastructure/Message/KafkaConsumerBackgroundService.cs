@@ -17,10 +17,10 @@ public class KafkaConsumerBackgroundService : BackgroundService
   {
     _logger = logger;
     var settings = options.Value;
-    
-    _logger.LogInformation("Kafka configuration - BootstrapServers: {BootstrapServers}, GroupId: {GroupId}, Topic: {Topic}", 
+
+    _logger.LogInformation("Kafka configuration - BootstrapServers: {BootstrapServers}, GroupId: {GroupId}, Topic: {Topic}",
       settings.BootstrapServers, settings.GroupId, settings.Topic);
-    
+
     _consumerConfig = new ConsumerConfig
     {
       GroupId = settings.GroupId,
@@ -40,10 +40,10 @@ public class KafkaConsumerBackgroundService : BackgroundService
       try
       {
         _logger.LogInformation("Attempting to connect to Kafka at {BootstrapServers}...", _consumerConfig.BootstrapServers);
-        
+
         using var consumer = new ConsumerBuilder<string, string>(_consumerConfig).Build();
         consumer.Subscribe(new[] { _topic });
-        
+
         _logger.LogInformation("Kafka consumer connected successfully to {BootstrapServers}", _consumerConfig.BootstrapServers);
 
         while (!stoppingToken.IsCancellationRequested)
@@ -51,7 +51,7 @@ public class KafkaConsumerBackgroundService : BackgroundService
           var consumeResult = consumer.Consume(stoppingToken);
           _logger.LogInformation("Consumed message: {Message}", consumeResult.Message.Value);
         }
-        
+
         consumer.Close();
       }
       catch (OperationCanceledException)
@@ -62,7 +62,7 @@ public class KafkaConsumerBackgroundService : BackgroundService
       catch (Exception ex)
       {
         _logger.LogError(ex, "Error connecting to Kafka at {BootstrapServers}. Retrying in 5 seconds...", _consumerConfig.BootstrapServers);
-        
+
         // Wait before retrying
         try
         {

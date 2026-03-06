@@ -3,21 +3,16 @@ using Confluent.Kafka;
 
 namespace CompraProgramadaAcoes.Infrastructure.Message;
 
-public class KafkaPublisher : IMessagePublisher
+public class KafkaPublisher(IProducer<string, string> producer) : IMessagePublisher
 {
-    private readonly IProducer<string, string> _producer;
+  private readonly IProducer<string, string> _producer = producer;
 
-    public KafkaPublisher(IProducer<string, string> producer)
+  public async Task PublishAsync(string topic, string message)
+  {
+    await _producer.ProduceAsync(topic, new Message<string, string>
     {
-        _producer = producer;
-    }
-
-    public async Task PublishAsync(string topic, string message)
-    {
-        var result = await _producer.ProduceAsync(topic, new Message<string, string>
-        {
-            Key = Guid.NewGuid().ToString(),
-            Value = message
-        });
-    }
+      Key = Guid.NewGuid().ToString(),
+      Value = message
+    });
+  }
 }
