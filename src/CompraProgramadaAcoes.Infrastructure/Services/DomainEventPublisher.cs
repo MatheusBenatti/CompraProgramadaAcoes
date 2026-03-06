@@ -1,12 +1,11 @@
 using CompraProgramadaAcoes.Domain.Events;
-using CompraProgramadaAcoes.Domain.Services;
 using CompraProgramadaAcoes.Application.Interfaces;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
 namespace CompraProgramadaAcoes.Infrastructure.Services;
 
-public class DomainEventPublisher(IMessagePublisher messagePublisher, ILogger<DomainEventPublisher> logger) : IEventPublisher
+public class DomainEventPublisher(IMessagePublisher messagePublisher, ILogger<DomainEventPublisher> logger) : IDomainEventPublisher
 {
   private readonly IMessagePublisher _messagePublisher = messagePublisher;
   private readonly ILogger<DomainEventPublisher> _logger = logger;

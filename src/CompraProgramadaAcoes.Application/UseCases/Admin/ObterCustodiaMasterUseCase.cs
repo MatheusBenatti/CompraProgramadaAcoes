@@ -3,7 +3,6 @@ using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.Services;
 using CompraProgramadaAcoes.Application.Exceptions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CompraProgramadaAcoes.Application.UseCases.Admin;
 
@@ -11,19 +10,17 @@ public class ObterCustodiaMasterUseCase(
     IContaGraficaRepository contaGraficaRepository,
     ICustodiaRepository custodiaRepository,
     CotahistParser cotahistParser,
-    IConfiguration configuration,
-    IWebHostEnvironment env)
+    IConfiguration configuration)
 {
   private readonly IContaGraficaRepository _contaGraficaRepository = contaGraficaRepository;
   private readonly ICustodiaRepository _custodiaRepository = custodiaRepository;
   private readonly CotahistParser _cotahistParser = cotahistParser;
   private readonly IConfiguration _configuration = configuration;
-  private readonly IWebHostEnvironment _env = env;
 
   private string ObterCaminhoCotacoes()
   {
     var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
-    return Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
+    return Path.GetFullPath(path);
   }
 
   public async Task<ContaMasterCustodiaResponse> ExecuteAsync()

@@ -76,32 +76,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CotacoesB3",
-                columns: table => new
-                {
-                    DataPregao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Ticker = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CodigoBDI = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    TipoMercado = table.Column<int>(type: "int", nullable: false),
-                    NomeEmpresa = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PrecoAbertura = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PrecoMaximo = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PrecoMinimo = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PrecoFechamento = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PrecoMedio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    QuantidadeNegociada = table.Column<long>(type: "bigint", nullable: false),
-                    VolumeNegociado = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CotacoesB3", x => new { x.DataPregao, x.Ticker });
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Vendas",
                 columns: table => new
                 {
@@ -405,9 +379,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Cotacoes");
-
-            migrationBuilder.DropTable(
-                name: "CotacoesB3");
 
             migrationBuilder.DropTable(
                 name: "Distribuicoes");

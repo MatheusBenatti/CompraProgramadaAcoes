@@ -4,25 +4,22 @@ using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.Services;
 using CompraProgramadaAcoes.Application.Exceptions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CompraProgramadaAcoes.Application.UseCases.Admin;
 
 public class ObterCestaAtualUseCase(
     ICestaRecomendacaoRepository cestaRepository,
     CotahistParser cotahistParser,
-    IConfiguration configuration,
-    IWebHostEnvironment env)
+    IConfiguration configuration)
 {
   private readonly ICestaRecomendacaoRepository _cestaRepository = cestaRepository;
   private readonly CotahistParser _cotahistParser = cotahistParser;
   private readonly IConfiguration _configuration = configuration;
-  private readonly IWebHostEnvironment _env = env;
 
   private string ObterCaminhoCotacoes()
   {
     var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
-    return Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
+    return Path.GetFullPath(path);
   }
 
   public async Task<CestaAtualResponse> ExecuteAsync()

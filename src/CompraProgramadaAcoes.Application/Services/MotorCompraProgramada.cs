@@ -4,7 +4,6 @@ using CompraProgramadaAcoes.Application.DTOs;
 using CompraProgramadaAcoes.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
@@ -19,8 +18,7 @@ public class MotorCompraProgramada(
       IMessagePublisher messagePublisher,
       CotahistParser cotahistParser,
       ILogger<MotorCompraProgramada> logger,
-      IConfiguration configuration,
-      IWebHostEnvironment env) : IMotorCompraProgramada
+      IConfiguration configuration) : IMotorCompraProgramada
 {
   private readonly IClienteRepository _clienteRepository = clienteRepository;
   private readonly IContaMasterRepository _contaMasterRepository = contaMasterRepository;
@@ -33,13 +31,12 @@ public class MotorCompraProgramada(
   private readonly CotahistParser _cotahistParser = cotahistParser;
   private readonly ILogger<MotorCompraProgramada> _logger = logger;
   private readonly IConfiguration _configuration = configuration;
-  private readonly IWebHostEnvironment _env = env;
 
   /// Obtém o caminho completo para a pasta de cotações
   private string ObterCaminhoCotacoes()
   {
     var path = _configuration["FileStorage:CotacoesPath"] ?? "cotacoes";
-    return Path.GetFullPath(Path.Combine(_env.ContentRootPath, path));
+    return Path.GetFullPath(path);
   }
 
   public async Task ExecutarComprasProgramadasAsync(DateTime dataReferencia)

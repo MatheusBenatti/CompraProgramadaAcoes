@@ -1,7 +1,8 @@
-using CompraProgramadaAcoes.Application.EventHandlers;
+using CompraProgramadaAcoes.Infrastructure.EventHandlers;
 using CompraProgramadaAcoes.Domain.Events;
 using CompraProgramadaAcoes.Domain.ValueObjects;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
+using CompraProgramadaAcoes.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -10,14 +11,16 @@ namespace CompraProgramadaAcoes.UnitTests.EventHandlers;
 public class ClienteEventHandlerTests
 {
     private readonly Mock<IClienteRepository> _clienteRepositoryMock;
+    private readonly Mock<IMessagePublisher> _messagePublisherMock;
     private readonly Mock<ILogger<ClienteEventHandler>> _loggerMock;
     private readonly ClienteEventHandler _eventHandler;
 
     public ClienteEventHandlerTests()
     {
         _clienteRepositoryMock = new Mock<IClienteRepository>();
+        _messagePublisherMock = new Mock<IMessagePublisher>();
         _loggerMock = new Mock<ILogger<ClienteEventHandler>>();
-        _eventHandler = new ClienteEventHandler(_clienteRepositoryMock.Object, _loggerMock.Object);
+        _eventHandler = new ClienteEventHandler(_clienteRepositoryMock.Object, _messagePublisherMock.Object, _loggerMock.Object);
     }
 
     [Fact]

@@ -10,6 +10,7 @@ using CompraProgramadaAcoes.Infrastructure.Cache;
 using CompraProgramadaAcoes.Infrastructure.Message;
 using CompraProgramadaAcoes.Infrastructure.Repositories;
 using CompraProgramadaAcoes.Infrastructure.Services;
+using CompraProgramadaAcoes.Infrastructure.EventHandlers;
 using CompraProgramadaAcoes.Domain.Factories;
 using CompraProgramadaAcoes.Application.Interfaces.Repositories;
 using CompraProgramadaAcoes.Application.Interfaces;
@@ -47,12 +48,13 @@ public static class DependencyInjection
     services.AddScoped<IOrdemCompraRepository, OrdemCompraRepository>();
     services.AddScoped<IDistribuicaoRepository, DistribuicaoRepository>();
     services.AddScoped<IContaMasterRepository, ContaMasterRepository>();
+    services.AddScoped<ICotacaoRepository, CotacaoRepository>();
     services.AddScoped<IEventoIRRepository, EventoIRRepository>();
     services.AddScoped<ICotacaoRepository, CotacaoRepository>();
-
+    
     // Domain Services
     services.AddScoped<ICalculadoraDistribuicao, CalculadoraDistribuicao>();
-    services.AddScoped<IEventPublisher, DomainEventPublisher>();
+    services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
     services.AddScoped<ICotacaoService, CotacaoService>();
 
     // Factories
@@ -120,13 +122,14 @@ public static class DependencyInjection
 
     services.AddScoped<IMessagePublisher, KafkaPublisher>();
 
-    // KAFKA - CONSUMER (apenas em ambiente de produção/Docker)
-    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-    if (environment != "Development")
-    {
-      services.AddHostedService<KafkaConsumerBackgroundService>();
-    }
+    // EVENT HANDLERS
+    services.AddScoped<ClienteEventHandler>();
+    services.AddScoped<ContaEventHandler>();
+    services.AddScoped<OrdemCompraEventHandler>();
 
+    // KAFKA - CONSUMER 
+    services.AddHostedService<KafkaConsumerBackgroundService>();
+      
     return services;
   }
 }

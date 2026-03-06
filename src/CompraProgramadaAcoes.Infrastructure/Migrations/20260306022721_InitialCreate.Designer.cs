@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompraProgramadaAcoes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260305020813_InitialCreate")]
+    [Migration("20260306022721_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -164,54 +164,6 @@ namespace CompraProgramadaAcoes.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Cotacoes", (string)null);
-                });
-
-            modelBuilder.Entity("CompraProgramadaAcoes.Domain.Entities.CotacaoB3", b =>
-                {
-                    b.Property<DateTime>("DataPregao")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Ticker")
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("CodigoBDI")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("NomeEmpresa")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<decimal>("PrecoAbertura")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("PrecoFechamento")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("PrecoMaximo")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("PrecoMedio")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("PrecoMinimo")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<long>("QuantidadeNegociada")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("TipoMercado")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("VolumeNegociado")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("DataPregao", "Ticker");
-
-                    b.ToTable("CotacoesB3", (string)null);
                 });
 
             modelBuilder.Entity("CompraProgramadaAcoes.Domain.Entities.Custodia", b =>
