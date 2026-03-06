@@ -4,17 +4,12 @@ using CompraProgramadaAcoes.Application.UseCases.Motor;
 
 namespace CompraProgramadaAcoes.Application.Services;
 
-public class MotorService : IMotorService
+public class MotorService(ExecutarCompraUseCase executarCompraUseCase) : IMotorService
 {
-    private readonly ExecutarCompraUseCase _executarCompraUseCase;
+  private readonly ExecutarCompraUseCase _executarCompraUseCase = executarCompraUseCase;
 
-    public MotorService(ExecutarCompraUseCase executarCompraUseCase)
-    {
-        _executarCompraUseCase = executarCompraUseCase;
-    }
-
-    public async Task<ExecucaoCompraResponse> ExecutarCompraAsync(ExecutarCompraRequest request)
-    {
-        return await _executarCompraUseCase.ExecuteAsync(request);
-    }
+  public async Task<ExecucaoCompraResponse> ExecutarCompraAsync(ExecutarCompraRequest request)
+  {
+    return await _executarCompraUseCase.ExecuteAsync(request);
+  }
 }

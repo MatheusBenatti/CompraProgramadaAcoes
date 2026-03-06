@@ -32,6 +32,18 @@ public class EventoIRRepository(AppDbContext context) : IEventoIRRepository
             .ToListAsync();
     }
 
+    public async Task<List<EventoIR>> ObterPorDataReferenciaAsync(DateTime dataReferencia)
+    {
+        var inicio = dataReferencia.Date;
+        var fim = dataReferencia.Date.AddDays(1).AddTicks(-1);
+        
+        return await _context.EventosIR
+            .Include(e => e.Cliente)
+            .Where(e => e.DataEvento >= inicio && e.DataEvento <= fim)
+            .OrderByDescending(e => e.DataEvento)
+            .ToListAsync();
+    }
+
     public async Task<EventoIR> AddAsync(EventoIR evento)
     {
         await _context.EventosIR.AddAsync(evento);

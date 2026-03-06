@@ -34,6 +34,18 @@ public class OrdemCompraRepository(AppDbContext context) : IOrdemCompraRepositor
             .ToListAsync();
     }
 
+    public async Task<List<OrdemCompra>> ObterPorDataReferenciaAsync(DateTime dataReferencia)
+    {
+        var inicio = dataReferencia.Date;
+        var fim = dataReferencia.Date.AddDays(1).AddTicks(-1);
+        
+        return await _context.OrdensCompra
+            .Include(o => o.Distribuicoes)
+            .Where(o => o.DataExecucao >= inicio && o.DataExecucao <= fim)
+            .OrderByDescending(o => o.DataExecucao)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(OrdemCompra ordem)
     {
         await _context.OrdensCompra.AddAsync(ordem);

@@ -41,6 +41,23 @@ public class DistribuicaoRepository(AppDbContext context) : IDistribuicaoReposit
         return await _context.Distribuicoes
             .Include(d => d.OrdemCompra)
             .Include(d => d.CustodiaFilhote)
+            .ThenInclude(cf => cf.ContaGrafica)
+            .ThenInclude(cg => cg.Cliente)
+            .Where(d => d.DataDistribuicao >= inicio && d.DataDistribuicao <= fim)
+            .OrderByDescending(d => d.DataDistribuicao)
+            .ToListAsync();
+    }
+
+    public async Task<List<Distribuicao>> ObterPorDataReferenciaAsync(DateTime dataReferencia)
+    {
+        var inicio = dataReferencia.Date;
+        var fim = dataReferencia.Date.AddDays(1).AddTicks(-1);
+        
+        return await _context.Distribuicoes
+            .Include(d => d.OrdemCompra)
+            .Include(d => d.CustodiaFilhote)
+            .ThenInclude(cf => cf.ContaGrafica)
+            .ThenInclude(cg => cg.Cliente)
             .Where(d => d.DataDistribuicao >= inicio && d.DataDistribuicao <= fim)
             .OrderByDescending(d => d.DataDistribuicao)
             .ToListAsync();

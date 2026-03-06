@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Confluent.Kafka;
-using CompraProgramadaAcoes.Application.UseCases;
 using CompraProgramadaAcoes.Domain.Interfaces;
 using CompraProgramadaAcoes.Domain.Services;
 using CompraProgramadaAcoes.Infrastructure.Cache;
