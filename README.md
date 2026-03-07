@@ -79,7 +79,7 @@ Start-Process "{caminho arquivo}"
 
 
 ### 4. Acessar Documentação
-- **Swagger UI:** http://localhost:5070
+- **Swagger UI:** http://localhost:5000/swagger
 - **Kafka UI:** http://localhost:8081
 
 ## 📁 Estrutura do Projeto
