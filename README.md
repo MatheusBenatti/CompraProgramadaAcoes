@@ -15,7 +15,7 @@ Projeto desenvolvido para o Desafio que implementa um sistema completo de compra
 ### Exemplo de Uso
 
 #### Youtube
-- url: https://www.youtube.com/
+- url: [https://www.youtube.com/](https://www.youtube.com/watch?v=edXwVsz_rsU)
 
 
 ## 🏗️ Arquitetura
