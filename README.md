@@ -65,9 +65,18 @@ docker-compose up -d mysql redis zookeeper kafka kafka-ui
 
 ### 3. Executar a API
 ```bash
-cd src/CompraProgramadaAcoes.Api
-dotnet run
+docker-compose up api
 ```
+
+### Coverage
+dotnet test "tests/CompraProgramadaAcoes.UnitTests/CompraProgramadaAcoes.UnitTests.csproj" --settings:tests/coverage.runsettings --collect:"XPlat Code Coverage”
+
+### Gerar html
+reportgenerator "-reports:tests/CompraProgramadaAcoes.UnitTests/TestResults/**/coverage.cobertura.xml" "-targetdir:tests/CompraProgramadaAcoes.UnitTests/TestResults/Report" "-reporttypes:Html"
+
+### Abrir relatorio
+Start-Process "{caminho arquivo}"
+
 
 ### 4. Acessar Documentação
 - **Swagger UI:** http://localhost:5070
