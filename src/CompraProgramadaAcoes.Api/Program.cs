@@ -46,6 +46,16 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; // Swagger UI na raiz
     });
 }
+else
+{
+    // Habilitar Swagger também em produção/Docker
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Compra Programada Ações API v1");
+        c.RoutePrefix = "swagger"; // Swagger UI em /swagger para produção
+    });
+}
 
 app.MapOpenApi();
 app.MapControllers();

@@ -65,13 +65,8 @@ public class IrEventProcessorWorker(
       using var scope = _serviceProvider.CreateScope();
       var eventoIrRepository = scope.ServiceProvider.GetRequiredService<IEventoIRRepository>();
 
-      // Aqui você poderia desserializar e processar o evento
-      // Por enquanto, apenas logamos
-      _logger.LogInformation($"Processando evento IR: {mensagem}");
 
-      // Exemplo de como poderia ser o processamento:
-      // var evento = JsonSerializer.Deserialize<IrEventData>(mensagem);
-      // await eventoIrRepository.MarcarComoProcessado(evento.Id);
+      _logger.LogInformation($"Processando evento IR: {mensagem}");
 
       return Task.CompletedTask;
     }
@@ -82,8 +77,6 @@ public class IrEventProcessorWorker(
     }
   }
 }
-
-// DTO para dados do evento IR (exemplo)
 public class IrEventData
 {
   public long Id { get; set; }
