@@ -11,19 +11,16 @@ namespace CompraProgramadaAcoes.UnitTests.Infrastructure.EventHandlers;
 
 public class ContaEventHandlerTests
 {
-    private readonly Mock<IContaGraficaRepository> _contaGraficaRepositoryMock;
     private readonly Mock<IMessagePublisher> _messagePublisherMock;
     private readonly Mock<ILogger<ContaEventHandler>> _loggerMock;
     private readonly ContaEventHandler _handler;
 
     public ContaEventHandlerTests()
     {
-        _contaGraficaRepositoryMock = new Mock<IContaGraficaRepository>();
         _messagePublisherMock = new Mock<IMessagePublisher>();
         _loggerMock = new Mock<ILogger<ContaEventHandler>>();
         
         _handler = new ContaEventHandler(
-            _contaGraficaRepositoryMock.Object,
             _messagePublisherMock.Object,
             _loggerMock.Object);
     }
@@ -32,7 +29,7 @@ public class ContaEventHandlerTests
     public async Task Handle_AtivosDistribuidosEventValido_DeveProcessarEPublicarEvento()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 },
@@ -41,20 +38,18 @@ public class ContaEventHandlerTests
         var valorTotal = new ValorMonetario(10000m);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorTotal, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
 
         // Act
         await _handler.Handle(@event);
 
         // Assert
-        VerifyLoggerLoggedInformation($"Processando distribuição de ativos para o cliente {clienteId}");
-        VerifyLoggerLoggedInformation($"Publicando evento de distribuição para cliente {clienteId} (busca de conta desabilitada devido à incompatibilidade de tipos)");
         VerifyLoggerLoggedInformation($"Evento AtivosDistribuidos publicado no Kafka para o cliente {clienteId}");
 
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "distribuicao-events",
             It.Is<string>(json => json.Contains("\"Evento\":\"AtivosDistribuidos\"") && 
-                                  json.Contains($"\"ClienteId\":\"{clienteId}\"") &&
+                                  json.Contains($"\"ClienteId\":{clienteId}") &&
                                   json.Contains("\"PETR4\":100") &&
                                   json.Contains("\"VALE3\":50") &&
                                   json.Contains("\"ValorTotalDistribuido\":10000") &&
@@ -65,25 +60,23 @@ public class ContaEventHandlerTests
     public async Task Handle_AtivosDistribuidosEventComAtivosVazios_DeveProcessarEPublicarEvento()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>();
         var valorTotal = new ValorMonetario(0m);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorTotal, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
 
         // Act
         await _handler.Handle(@event);
 
         // Assert
-        VerifyLoggerLoggedInformation($"Processando distribuição de ativos para o cliente {clienteId}");
-        VerifyLoggerLoggedInformation($"Publicando evento de distribuição para cliente {clienteId} (busca de conta desabilitada devido à incompatibilidade de tipos)");
         VerifyLoggerLoggedInformation($"Evento AtivosDistribuidos publicado no Kafka para o cliente {clienteId}");
 
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "distribuicao-events",
             It.Is<string>(json => json.Contains("\"Evento\":\"AtivosDistribuidos\"") && 
-                                  json.Contains($"\"ClienteId\":\"{clienteId}\"") &&
+                                  json.Contains($"\"ClienteId\":{clienteId}") &&
                                   json.Contains("\"AtivosRecebidos\":{}") &&
                                   json.Contains("\"ValorTotalDistribuido\":0") &&
                                   json.Contains("\"Origem\":\"CompraProgramadaAcoes\""))));
@@ -93,7 +86,7 @@ public class ContaEventHandlerTests
     public async Task Handle_AtivosDistribuidosEventComMultiplosAtivos_DeveProcessarEPublicarEventoCorretamente()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 },
@@ -104,7 +97,7 @@ public class ContaEventHandlerTests
         var valorTotal = new ValorMonetario(25000m);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorTotal, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
 
         // Act
         await _handler.Handle(@event);
@@ -123,7 +116,7 @@ public class ContaEventHandlerTests
     public async Task Handle_MessagePublisherLancaExcecao_DeveLogarErroEPropagarExcecao()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 }
@@ -131,7 +124,7 @@ public class ContaEventHandlerTests
         var valorTotal = new ValorMonetario(5000m);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorTotal, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
         var expectedException = new InvalidOperationException("Kafka connection failed");
 
         _messagePublisherMock.Setup(p => p.PublishAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -141,8 +134,7 @@ public class ContaEventHandlerTests
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(@event));
         exception.Should().Be(expectedException);
 
-        VerifyLoggerLoggedInformation($"Processando distribuição de ativos para o cliente {clienteId}");
-        VerifyLoggerLoggedInformation($"Publicando evento de distribuição para cliente {clienteId} (busca de conta desabilitada devido à incompatibilidade de tipos)");
+        // Não verifica logger pois exception é lançada antes do log
     }
 
     [Theory]
@@ -152,7 +144,7 @@ public class ContaEventHandlerTests
     public async Task Handle_DiferentesValoresTotais_DevePublicarEventoComValorCorreto(decimal valorTotal)
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 }
@@ -160,7 +152,7 @@ public class ContaEventHandlerTests
         var valorMonetario = new ValorMonetario(valorTotal);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorMonetario, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorMonetario, dataDistribuicao);
 
         // Act
         await _handler.Handle(@event);
@@ -175,7 +167,7 @@ public class ContaEventHandlerTests
     public async Task Handle_DataDistribuicaoEspecifica_DevePublicarEventoComDataCorreta()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 }
@@ -183,7 +175,7 @@ public class ContaEventHandlerTests
         var valorTotal = new ValorMonetario(5000m);
         var dataDistribuicao = new DateTime(2024, 3, 15, 14, 30, 0);
 
-        var @event = new AtivosDistribuidosEvent(clienteId, ativosRecebidos, valorTotal, dataDistribuicao);
+        var @event = new AtivosDistribuidosEvent(clienteId, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
 
         // Act
         await _handler.Handle(@event);
@@ -198,8 +190,8 @@ public class ContaEventHandlerTests
     public async Task Handle_MultiplasChamadas_DevePublicarEventosIndependentes()
     {
         // Arrange
-        var clienteId1 = Guid.NewGuid();
-        var clienteId2 = Guid.NewGuid();
+        var clienteId1 = 123L;
+        var clienteId2 = 456L;
         var ativosRecebidos = new Dictionary<Ticker, int>
         {
             { new Ticker("PETR4"), 100 }
@@ -207,8 +199,8 @@ public class ContaEventHandlerTests
         var valorTotal = new ValorMonetario(5000m);
         var dataDistribuicao = DateTime.UtcNow;
 
-        var event1 = new AtivosDistribuidosEvent(clienteId1, ativosRecebidos, valorTotal, dataDistribuicao);
-        var event2 = new AtivosDistribuidosEvent(clienteId2, ativosRecebidos, valorTotal, dataDistribuicao);
+        var event1 = new AtivosDistribuidosEvent(clienteId1, "12345", ativosRecebidos, valorTotal, dataDistribuicao);
+        var event2 = new AtivosDistribuidosEvent(clienteId2, "67890", ativosRecebidos, valorTotal, dataDistribuicao);
 
         // Act
         await _handler.Handle(event1);
@@ -217,11 +209,11 @@ public class ContaEventHandlerTests
         // Assert
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "distribuicao-events",
-            It.Is<string>(json => json.Contains($"\"ClienteId\":\"{clienteId1}\""))));
+            It.Is<string>(json => json.Contains($"\"ClienteId\":{clienteId1}"))));
 
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "distribuicao-events",
-            It.Is<string>(json => json.Contains($"\"ClienteId\":\"{clienteId2}\""))));
+            It.Is<string>(json => json.Contains($"\"ClienteId\":{clienteId2}"))));
 
         _messagePublisherMock.Verify(p => p.PublishAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
     }

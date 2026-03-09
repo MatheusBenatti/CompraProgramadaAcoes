@@ -13,14 +13,14 @@ public interface ICalculadoraDistribuicao
   );
 
   CompraConsolidadaResult CalcularCompraConsolidada(
-      Dictionary<Guid, ValorMonetario> aportesClientes,
+      Dictionary<long, ValorMonetario> aportesClientes,
       CestaRecomendacao cesta,
       Dictionary<Ticker, decimal> cotacoes
   );
 }
 
 public record DistribuicaoResult(
-    Dictionary<Guid, Dictionary<Ticker, int>> DistribuicaoPorCliente,
+    Dictionary<long, Dictionary<Ticker, int>> DistribuicaoPorCliente,
     Dictionary<Ticker, int> ResiduosMaster
 );
 

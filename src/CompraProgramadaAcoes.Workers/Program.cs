@@ -18,9 +18,9 @@ public class Program
           // Adicionar logging
           services.AddLogging(builder =>
               {
-              builder.AddConsole();
-              builder.SetMinimumLevel(LogLevel.Information);
-            });
+                builder.AddConsole();
+                builder.SetMinimumLevel(LogLevel.Information);
+              });
 
           // Registrar serviços da aplicação
           services.AddScoped<IMotorCompraProgramada, Application.Services.MotorCompraProgramada>();
@@ -30,7 +30,7 @@ public class Program
           services.AddHostedService<CompraProgramadaWorker>();
           services.AddHostedService<RebalanceamentoWorker>();
 
-          // Worker de processamento IR (opcional - apenas se não for Development)
+          // Worker de processamento IR (apenas se não for Development)
           var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
           if (environment != "Development")
           {

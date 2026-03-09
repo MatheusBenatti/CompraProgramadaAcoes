@@ -3,7 +3,7 @@ using CompraProgramadaAcoes.Domain.ValueObjects;
 namespace CompraProgramadaAcoes.Domain.Events;
 
 public record InvestimentoRealizadoEvent(
-    Guid ClienteId,
+    long ClienteId,
     ValorMonetario ValorInvestido,
     Dictionary<Ticker, int> AtivosDistribuidos,
     DateTime DataInvestimento
@@ -15,7 +15,7 @@ public record InvestimentoRealizadoEvent(
 }
 
 public record CompraConsolidadaEvent(
-    Guid ContaMasterId,
+    long ContaMasterId,
     Dictionary<Ticker, (int Quantidade, decimal ValorTotal)> ComprasRealizadas,
     ValorMonetario ValorTotalConsolidado,
     DateTime DataCompra
@@ -27,7 +27,8 @@ public record CompraConsolidadaEvent(
 }
 
 public record AtivosDistribuidosEvent(
-    Guid ClienteId,
+    long ClienteId,
+    string NumeroConta,
     Dictionary<Ticker, int> AtivosRecebidos,
     ValorMonetario ValorTotalDistribuido,
     DateTime DataDistribuicao

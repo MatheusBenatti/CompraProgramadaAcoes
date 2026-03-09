@@ -5,7 +5,7 @@ namespace CompraProgramadaAcoes.Domain.Entities;
 
 public class ClienteAggregate : IAggregateRoot
 {
-  public Guid Id { get; private set; }
+  public long Id { get; private set; }
   public string Nome { get; private set; } = string.Empty;
   public CPF Cpf { get; private set; } = null!;
   public Email Email { get; private set; } = null!;
@@ -21,7 +21,7 @@ public class ClienteAggregate : IAggregateRoot
 
   public ClienteAggregate(string nome, CPF cpf, Email email, ValorMonetario valorMensal)
   {
-    Id = Guid.NewGuid();
+    Id = 0; // Será preenchido pelo Identity do banco
     Nome = nome;
     Cpf = cpf;
     Email = email;
@@ -29,7 +29,7 @@ public class ClienteAggregate : IAggregateRoot
     Ativo = true;
     DataAdesao = DateTime.UtcNow;
 
-    AddDomainEvent(new ClienteCriadoEvent(Id, Nome, Cpf, Email, ValorMensal, DataAdesao));
+    AddDomainEvent(new ClienteCriadoEvent(0, Nome, Cpf, Email, ValorMensal, DataAdesao));
   }
 
   public void AlterarValorMensal(ValorMonetario novoValor)

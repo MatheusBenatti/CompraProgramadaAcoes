@@ -4,7 +4,7 @@ using CompraProgramadaAcoes.Domain.Entities;
 namespace CompraProgramadaAcoes.Domain.Events;
 
 public record IrDeduDuroEvent(
-    Guid ClienteId,
+    long ClienteId,
     Ticker Ticker,
     int Quantidade,
     ValorMonetario ValorOperacao,
@@ -18,7 +18,7 @@ public record IrDeduDuroEvent(
 }
 
 public record IrVendaEvent(
-    Guid ClienteId,
+    long ClienteId,
     Ticker Ticker,
     int Quantidade,
     ValorMonetario ValorVenda,
@@ -34,7 +34,7 @@ public record IrVendaEvent(
 }
 
 public record RebalanceamentoEvent(
-    Guid ClienteId,
+    long ClienteId,
     TipoRebalanceamento Tipo,
     Ticker? TickerVendido,
     Ticker? TickerComprado,

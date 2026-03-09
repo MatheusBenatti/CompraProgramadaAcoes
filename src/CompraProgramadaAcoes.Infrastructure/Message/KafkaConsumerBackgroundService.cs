@@ -63,7 +63,7 @@ public class KafkaConsumerBackgroundService : BackgroundService
       {
         _logger.LogError(ex, "Error connecting to Kafka at {BootstrapServers}. Retrying in 5 seconds...", _consumerConfig.BootstrapServers);
 
-        // Wait before retrying
+        // Espera para nova tentativa
         try
         {
           await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);

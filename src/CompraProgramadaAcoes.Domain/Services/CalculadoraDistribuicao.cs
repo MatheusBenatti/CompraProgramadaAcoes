@@ -12,7 +12,7 @@ public class CalculadoraDistribuicao : ICalculadoraDistribuicao
       Dictionary<Ticker, decimal> cotacoes
   )
   {
-    var distribuicaoPorCliente = new Dictionary<Guid, Dictionary<Ticker, int>>();
+    var distribuicaoPorCliente = new Dictionary<long, Dictionary<Ticker, int>>();
     var residuosMaster = new Dictionary<Ticker, int>();
 
     // Calcular valor proporcional de cada cliente
@@ -59,7 +59,7 @@ public class CalculadoraDistribuicao : ICalculadoraDistribuicao
   }
 
   public CompraConsolidadaResult CalcularCompraConsolidada(
-      Dictionary<Guid, ValorMonetario> aportesClientes,
+      Dictionary<long, ValorMonetario> aportesClientes,
       CestaRecomendacao cesta,
       Dictionary<Ticker, decimal> cotacoes)
   {

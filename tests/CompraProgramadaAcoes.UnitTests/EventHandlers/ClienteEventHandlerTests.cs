@@ -27,7 +27,7 @@ public class ClienteEventHandlerTests
     public async Task Handle_ClienteCriadoEvent_DeveLogarMensagemCorreta()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var @event = new ClienteCriadoEvent(
             clienteId,
             "Teste",
@@ -55,7 +55,7 @@ public class ClienteEventHandlerTests
     public async Task Handle_ClienteDesativadoEvent_DeveLogarMensagemCorreta()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var motivo = "Solicitacao do cliente";
         var @event = new ClienteDesativadoEvent(
             clienteId,
@@ -81,7 +81,7 @@ public class ClienteEventHandlerTests
     public async Task Handle_ValorMensalAlteradoEvent_DeveLogarMensagemCorreta()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 123L;
         var valorAnterior = new ValorMonetario(500);
         var valorNovo = new ValorMonetario(1000);
         var @event = new ValorMensalAlteradoEvent(
@@ -110,7 +110,7 @@ public class ClienteEventHandlerTests
     {
         // Arrange
         var @event = new ClienteCriadoEvent(
-            Guid.NewGuid(),
+            123L,
             "Teste",
             new CPF("12345678901"),
             new Email("teste@email.com"),
@@ -128,7 +128,7 @@ public class ClienteEventHandlerTests
     {
         // Arrange
         var @event = new ClienteDesativadoEvent(
-            Guid.NewGuid(),
+            123L,
             "Teste",
             DateTime.UtcNow
         );
@@ -143,7 +143,7 @@ public class ClienteEventHandlerTests
     {
         // Arrange
         var @event = new ValorMensalAlteradoEvent(
-            Guid.NewGuid(),
+            123L,
             new ValorMonetario(500),
             new ValorMonetario(1000),
             DateTime.UtcNow

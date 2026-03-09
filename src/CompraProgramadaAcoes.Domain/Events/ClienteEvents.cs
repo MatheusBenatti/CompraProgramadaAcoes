@@ -3,7 +3,7 @@ using CompraProgramadaAcoes.Domain.ValueObjects;
 namespace CompraProgramadaAcoes.Domain.Events;
 
 public record ClienteCriadoEvent(
-    Guid ClienteId,
+    long ClienteId,
     string Nome,
     CPF Cpf,
     Email Email,
@@ -17,7 +17,7 @@ public record ClienteCriadoEvent(
 }
 
 public record ClienteDesativadoEvent(
-    Guid ClienteId,
+    long ClienteId,
     string Motivo,
     DateTime DataDesativacao
 ) : IDomainEvent
@@ -28,7 +28,7 @@ public record ClienteDesativadoEvent(
 }
 
 public record ValorMensalAlteradoEvent(
-    Guid ClienteId,
+    long ClienteId,
     ValorMonetario ValorAnterior,
     ValorMonetario ValorNovo,
     DateTime DataAlteracao

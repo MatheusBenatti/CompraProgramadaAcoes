@@ -32,7 +32,7 @@ public class OrdemCompraEventHandlerTests
     public async Task Handle_CompraConsolidadaEventValido_DeveProcessarEPublicarEvento()
     {
         // Arrange
-        var contaMasterId = Guid.NewGuid();
+        var contaMasterId = 789L;
         var comprasRealizadas = new Dictionary<Ticker, (int Quantidade, decimal ValorTotal)>
         {
             { new Ticker("PETR4"), (100, 5000m) },
@@ -53,7 +53,7 @@ public class OrdemCompraEventHandlerTests
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "compra-events",
             It.Is<string>(json => json.Contains("\"Evento\":\"CompraConsolidada\"") && 
-                                  json.Contains($"\"ContaMasterId\":\"{contaMasterId}\"") &&
+                                  json.Contains($"\"ContaMasterId\":{contaMasterId}") &&
                                   json.Contains("\"Ticker\":\"PETR4\"") &&
                                   json.Contains("\"Quantidade\":100") &&
                                   json.Contains("\"ValorTotal\":5000") &&
@@ -69,7 +69,7 @@ public class OrdemCompraEventHandlerTests
     public async Task Handle_InvestimentoRealizadoEventValido_DeveProcessarEPublicarEvento()
     {
         // Arrange
-        var clienteId = Guid.NewGuid();
+        var clienteId = 456L;
         var valorInvestido = new ValorMonetario(10000m);
         var ativosDistribuidos = new Dictionary<Ticker, int>
         {
@@ -90,7 +90,7 @@ public class OrdemCompraEventHandlerTests
         _messagePublisherMock.Verify(p => p.PublishAsync(
             "investimento-events",
             It.Is<string>(json => json.Contains("\"Evento\":\"InvestimentoRealizado\"") && 
-                                  json.Contains($"\"ClienteId\":\"{clienteId}\"") &&
+                                  json.Contains($"\"ClienteId\":{clienteId}") &&
                                   json.Contains("\"ValorInvestido\":10000") &&
                                   json.Contains("\"Ticker\":\"PETR4\"") &&
                                   json.Contains("\"Quantidade\":100") &&
