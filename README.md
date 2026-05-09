@@ -4,19 +4,13 @@ Sistema de investimento automatizado para compra programada de ações com foco 
 
 ## 🎯 Visão Geral
 
-Projeto desenvolvido para o Desafio que implementa um sistema completo de compra programada de ações.
+Projeto que implementa um sistema completo de compra programada de ações.
 
 - **Gestão de Clientes:** Adesão, saída e manutenção de contas
 - **Cestas Top Five:** Gestão de carteiras recomendadas com 5 ativos
 - **Motor de Compras:** Execução automatizada de investimentos
 - **Rebalanceamento:** Ajuste automático de carteiras
 - **Cálculo de IR:** Geração de eventos para imposto de renda
-
-### Exemplo de Uso
-
-#### Youtube
-- url: [https://www.youtube.com/](https://www.youtube.com/watch?v=edXwVsz_rsU)
-
 
 ## 🏗️ Arquitetura
 
@@ -52,21 +46,19 @@ Projeto desenvolvido para o Desafio que implementa um sistema completo de compra
 - .NET 9.0 SDK
 - Git
 
-### 1. Clonar o Projeto
-```bash
-git clone <repository-url>
-cd CompraProgramadaAcoes
-```
 
-### 2. Iniciar Infraestrutura
+### 1. Iniciar Infraestrutura
 ```bash
 docker-compose up -d mysql redis zookeeper kafka kafka-ui
 ```
 
-### 3. Executar a API
+### 2. Executar a API
 ```bash
 docker-compose up api
 ```
+### 3. Acessar Documentação
+- **Swagger UI:** http://localhost:5000/swagger
+- **Kafka UI:** http://localhost:8081
 
 ### Coverage
 dotnet test "tests/CompraProgramadaAcoes.UnitTests/CompraProgramadaAcoes.UnitTests.csproj" --settings:tests/coverage.runsettings --collect:"XPlat Code Coverage”
@@ -78,22 +70,18 @@ reportgenerator "-reports:tests/CompraProgramadaAcoes.UnitTests/TestResults/**/c
 Start-Process "{caminho arquivo}"
 
 
-### 4. Acessar Documentação
-- **Swagger UI:** http://localhost:5000/swagger
-- **Kafka UI:** http://localhost:8081
-
 ## 📁 Estrutura do Projeto
 
 ```
 CompraProgramadaAcoes/
+├── cotacoes/                                 # Arquivo B3
 ├── src/
-│   ├── CompraProgramadaAcoes.Api/           # Web API
+│   ├── CompraProgramadaAcoes.Api/            # Web API
 │   ├── CompraProgramadaAcoes.Application/    # Camada de Aplicação
 │   ├── CompraProgramadaAcoes.Domain/         # Domínio
 │   ├── CompraProgramadaAcoes.Infrastructure/ # Infraestrutura
 │   └── CompraProgramadaAcoes.Workers/        # Background Services
 ├── tests/                                    # Testes Unitários
-├── docs/                                     # Documentação
 ├── docker-compose.yml                        # Orquestração Docker
 └── README.md                                 # Este arquivo
 ```
@@ -164,7 +152,7 @@ POST   /api/rebalanceamento/mudanca-cesta # Rebalancear por mudança
 
 ### Schema Principal
 ```sql
-Clientes                 -- Dados dos clientes
+Clientes                -- Dados dos clientes
 ContasGraficas          -- Contas de cada cliente
 CestasRecomendacao      -- Cestas Top Five
 ItensCesta              -- Ativos das cestas
