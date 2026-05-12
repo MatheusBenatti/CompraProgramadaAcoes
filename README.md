@@ -1,8 +1,4 @@
-# Compra Programada Ações
-
-Sistema de investimento automatizado para compra programada de ações com foco em cestas diversificadas do mercado brasileiro.
-
-## 🎯 Visão Geral
+## Visão Geral
 
 Projeto que implementa um sistema completo de compra programada de ações.
 
@@ -12,7 +8,7 @@ Projeto que implementa um sistema completo de compra programada de ações.
 - **Rebalanceamento:** Ajuste automático de carteiras
 - **Cálculo de IR:** Geração de eventos para imposto de renda
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ### Clean Architecture
 ```
@@ -39,7 +35,7 @@ Projeto que implementa um sistema completo de compra programada de ações.
 - **Docker** - Containerização
 - **Swagger/OpenAPI** - Documentação da API
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Pré-requisitos
 - Docker Desktop
@@ -70,7 +66,7 @@ reportgenerator "-reports:tests/CompraProgramadaAcoes.UnitTests/TestResults/**/c
 Start-Process "{caminho arquivo}"
 
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 CompraProgramadaAcoes/
@@ -87,7 +83,7 @@ CompraProgramadaAcoes/
 ```
 
 
-## 📊 Funcionalidades
+## Funcionalidades
 
 ### 1. Gestão de Clientes
 - **Adesão:** Novos clientes podem aderir ao sistema
@@ -117,7 +113,7 @@ CompraProgramadaAcoes/
 - **Venda:** 20% sobre lucros (acima de R$ 20k/mês)
 - **Eventos:** Publicados no Kafka para sistema fiscal
 
-## 📚 API Documentation
+## API Documentation
 
 ### Endpoints Principais
 
@@ -148,7 +144,7 @@ POST   /api/motor/executar-compra    # Executar compra (testes)
 POST   /api/rebalanceamento/mudanca-cesta # Rebalancear por mudança
 ```
 
-## 🗄️ Banco de Dados
+## Banco de Dados
 
 ### Schema Principal
 ```sql
